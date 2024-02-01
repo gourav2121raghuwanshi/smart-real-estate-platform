@@ -41,7 +41,7 @@ exports.signin = async (req, res, next) => {
             id: validUser._id
 
         };
-        // Create a new object to avoid modifying a const variable
+     
         const token = jwt.sign(payload, process.env.JWT_SECRET, {
             expiresIn: "2d",
         });
@@ -54,24 +54,9 @@ exports.signin = async (req, res, next) => {
             expires: new Date(Date.now() + 10 * 24 * 60 * 60 * 1000),
             httpOnly: true,
         };
-
-        // Set the cookie or use headers based on your use case
+ 
         res.cookie("access_token", token, options).status(200).json(rest);
 
-        // validUser=validUser.toObject();
-        // validUser.token=token;
-
-        // console.log(token);
-        // const { password: pass, ...rest } = validUser._doc;
-        // const options = {
-        //     expires: new Date(Date.now() + 10 * 24 * 60 * 60 * 1000),
-        //     httpOnly: true,
-
-        // }
-
-        // res.cookie("access_token", token, options)
-        //     .status(200).
-        //     json(rest);
     } catch (err) {
         console.error(`Error in signin: ${err.message}`);
         next(err);

@@ -14,7 +14,7 @@ exports.createListing = async (req, res, next) => {
 
 exports.deleteListing = async (req, res, next) => {
     try {
-        // console.log("inside listing ", req.body);
+       
         const listing = await Listing.findById(req.params.id);
         if (!listing) {
             return next(errorHandler(404, "Listing Not Found"));

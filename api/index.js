@@ -5,14 +5,11 @@ const path = require('path');
 const userroute = require('./routes/userRoute.js')
 const authRouter = require('./routes/authRoute.js');
 const listingRouter = require('./routes/listingRouter.js');
-require('dotenv').config();
+const dbConnect=require('./utils/databaseConnect.js')
 const cors = require('cors');
+require('dotenv').config();
 
-mongoose.connect(process.env.DBURL)
-  .then(() => console.log("connected to DataBase"))
-  .catch((error) => {
-    console.log(`Error occure in Database Connection : ${error}`)
-  })
+dbConnect();
 
 __dirname = path.resolve();
 
