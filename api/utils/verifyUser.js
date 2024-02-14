@@ -3,8 +3,7 @@ const jwt = require('jsonwebtoken');
 
 exports.verifyToken = async (req, res, next) => {
     const token = req.cookies.access_token;
-    // console.log(token);
-
+   
     if (!token) {
         return next(errorHandler(401, "Unauthorized: Token is empty or incorrect"));
     }

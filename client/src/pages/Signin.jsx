@@ -12,7 +12,7 @@ const Signin = () => {
     email: '',
     password: '',
   });
-  const { loading, error } = useSelector((state) => state.user)
+  const { loading, error } = useSelector((state) => state.user);
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const handleChange = (e) => {
@@ -32,6 +32,7 @@ const Signin = () => {
         },
       });
       const data = await res.data;
+      console.log("data is : ",data)
       console.log(res)
 
       if (data.success === false) {

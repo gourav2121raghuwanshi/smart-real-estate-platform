@@ -13,7 +13,26 @@ exports.signup = async (req, res, next) => {
 
         const user = await User.create({ username, email, password: hashedPassword });
 
-        res.status(201).json("User Created Successfully ");
+        const payload = {
+            email: email,
+            id: user._id
+        };
+
+        const token = jwt.sign(payload, process.env.JWT_SECRET, {
+            expiresIn: "2d",
+        });
+        console.log(token);
+        const userWithToken = { ...user.toObject(), token };
+
+        const { password: pass, ...rest } = userWithToken;
+
+        const options = {
+            expires: new Date(Date.now() + 10 * 24 * 60 * 60 * 1000),
+            httpOnly: true,
+        };
+
+        res.cookie("access_token", token, options).status(200).json(rest);
+        // res.status(201).json("User Created Successfully ");
     } catch (err) {
         console.log(`error in signup ${err.message}`);
         next(err);
@@ -41,7 +60,7 @@ exports.signin = async (req, res, next) => {
             id: validUser._id
 
         };
-     
+
         const token = jwt.sign(payload, process.env.JWT_SECRET, {
             expiresIn: "2d",
         });
@@ -54,9 +73,9 @@ exports.signin = async (req, res, next) => {
             expires: new Date(Date.now() + 10 * 24 * 60 * 60 * 1000),
             httpOnly: true,
         };
- 
-        res.cookie("access_token", token, options).status(200).json(rest);
 
+        res.cookie("access_token", token, options).status(200).json(rest);
+        
     } catch (err) {
         console.error(`Error in signin: ${err.message}`);
         next(err);

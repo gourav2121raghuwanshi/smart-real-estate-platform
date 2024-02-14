@@ -4,6 +4,9 @@ import { useState } from 'react';
 import axios from 'axios'
 import { useNavigate } from 'react-router-dom';
 import OAuth from '../components/OAuth';
+import { useDispatch, useSelector } from 'react-redux';
+
+import { signUpStart, signUpSuccess, signUpFailure } from "../redux/user/userSlice"
 const SignUp = () => {
 
   const [formdata, setformdata] = useState({
@@ -11,9 +14,11 @@ const SignUp = () => {
     email: '',
     password: '',
   });
-  const [error, setError] = useState(null);
-  const [loading, setLoading] = useState(false);
+  const [errorr, setError] = useState(null);
+  const [loadingg, setLoading] = useState(false);
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const { loading, error } = useSelector((state) => state.user);
   const handleChange = (e) => {
     setformdata(
       {
@@ -32,6 +37,7 @@ const SignUp = () => {
     setLoading(true);
   
     try {
+      dispatch(signUpStart());
       const res = await axios.post('/api/auth/signup', formdata, {
         headers: {
           'Content-Type': 'application/json',
@@ -42,16 +48,21 @@ const SignUp = () => {
   
       if (data.success === false) {
         setLoading(false);
+        dispatch(signUpFailure(data.message));
         setError(data.message);
         return;
       }
   
       setLoading(false);
       setError(null)
-      navigate('/sign-in')
+      dispatch(signUpSuccess(data));
+      // navigate('/sign-in')
+      navigate('/')
       // console.log(data);
     } catch (error) {
       setLoading(false);
+      dispatch(signUpFailure());
+     
       setError(error.message); 
       console.error('Error:', error.message);
     }
@@ -72,8 +83,8 @@ const SignUp = () => {
         </input>
         <input type="password" placeholder='password' value={formdata.password} className='sm:text-xl font-semibold border p-3 rounded-lg ' id='password' onChange={handleChange} >
         </input>
-        <button disabled={loading} className='bg-slate-700 text-white p-3 sm:text-xl py-3  rounded-lg uppercase hover:opacity-95 disabled:opacity-80 transition-all  duration-200' >
-          {loading ? 'Loading...' : 'Sign up'}
+        <button disabled={loadingg} className='bg-slate-700 text-white p-3 sm:text-xl py-3  rounded-lg uppercase hover:opacity-95 disabled:opacity-80 transition-all  duration-200' >
+          {loadingg ? 'Loading...' : 'Sign up'}
         </button>
         <OAuth/>
       </form>
@@ -85,7 +96,7 @@ const SignUp = () => {
           </span>
         </Link>
       </div>
-      {error && <p className='text-red-500 mt-5 font-semibold text-xl'>{error}</p>}
+      {errorr && <p className='text-red-500 mt-5 font-semibold text-xl'>{errorr}</p>}
     </div>
   )
 }
