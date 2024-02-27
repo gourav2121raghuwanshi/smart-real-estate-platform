@@ -42,7 +42,6 @@ const Signin = () => {
       console.log(data.token);
       document.cookie = `access_token=${data.token}; path=/`;
       
-
       dispatch(signInSuccess(data));
       navigate('/')
 

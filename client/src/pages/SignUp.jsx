@@ -27,12 +27,7 @@ const SignUp = () => {
       }
     )
   }
-  
-   
-
-
-
-  const handleSubmit = async (e) => {
+    const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
   
@@ -67,9 +62,7 @@ const SignUp = () => {
       console.error('Error:', error.message);
     }
   };
-  
- 
-  
+    
   return (
     <div className='p-5 max-w-2xl mx-auto'>
 
