@@ -27,8 +27,8 @@ const Header = () => {
       <div className='flex justify-between items-center max-w-7xl  mx-auto p-3'>
         <Link to='/'>
           <h1 className='font-bold hover:cursor-pointer text-sm sm:text-xl flex flex-wrap '>
-            <span className='text-slate-500 font-bold md:text-2xl lg:text-4xl'>FindYour</span>
-            <span className='text-slate-700 font-bold md:text-2xl lg:text-4xl'>Home</span>
+            <span className='text-slate-500 font-bold text-lg md:text-2xl lg:text-4xl'>FindYour</span>
+            <span className='text-slate-700 font-bold text-lg md:text-2xl lg:text-4xl'>Home</span>
           </h1>
         </Link>
         <form onSubmit={handleSubmit} className='bg-slate-100  flex items-center justify-between p-3 rounded-lg '>
@@ -57,7 +57,8 @@ const Header = () => {
           <Link to='/profile'>
             {
               currentUser ? (
-                <img src={currentUser.avatar || "https://res.cloudinary.com/domheydkx/image/upload/v1705905528/gourav/uyb6ntwjcrxacztiw4iv.jpg"} className='rounded-full h-10 w-10 object-contain' alt='profile'>
+                <img src={currentUser.avatar || "https://res.cloudinary.com/domheydkx/image/upload/v1705905528/gourav/uyb6ntwjcrxacztiw4iv.jpg"}
+                 className='rounded-full h-10 w-10 object-contain' alt='profile'>
                 </img>
               ) : (
                 <li className='text-slate-700 font-semibold hover:underline hover:cursor-pointer'>
