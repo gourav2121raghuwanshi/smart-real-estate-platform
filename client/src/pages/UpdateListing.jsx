@@ -359,6 +359,7 @@ const UpdateListing = () => {
                   <div className='relative'>
                     <img
                       src={url}
+                      loading='lazy'
                       alt="listing image"
                       className=' h-28 w-28  md:h-52 md:w-52 sm:h-36  sm:w-36 object-cover  rounded-lg '
 

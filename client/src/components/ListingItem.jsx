@@ -11,7 +11,9 @@ const ListingItem = ({ listing }) => {
             <img
                 src={listing.imageUrls[0] || "https://cdn.pixabay.com/photo/2017/06/16/15/58/luxury-home-2409518_640.jpg"}
                 className='md:h-[200px] sm:h-[150px] h-[100px] w-full object-cover
-             rounded-sm   hover:scale-105 transition-scale duration-300' >
+             rounded-sm   hover:scale-105 transition-scale duration-300'
+             loading='lazy'
+              >
             </img>
             <div className='p-3 flex flex-col gap-2 w-full'>
                 <p className='text-lg font-semibold truncate text-slate-700 '>{listing.name}</p>

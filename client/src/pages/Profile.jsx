@@ -182,6 +182,7 @@ export default function Profile() {
           src={formData.avatar || currentUser.avatar}
           onClick={() => fileRef.current.click()}
           alt="profile image"
+          loading='lazy'
           className='rounded-full h-20 w-20  sm:h-40 sm:w-40 object-cover cursor-pointer mt-4 self-center'
         />
         <p className='text-sm self-center'>
@@ -256,6 +257,7 @@ export default function Profile() {
             <div key={listing._id} className='flex sm:flex-row  gap-2 md:gap-4  border rounded-lg  justify-between items-center sm:p-2 md:p-4 p-1'>
               <Link to={`/listing/${listing._id}`} >
                 <img
+                loading='lazy'
                   src={listing.imageUrls[0]}
                   alt="listing img"
                   className='sm:h-36 sm:w-36 h-20 w-20 md:h-60 md:w-60 object-contain rounded-lg'
