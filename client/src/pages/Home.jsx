@@ -129,6 +129,11 @@ export default function Home() {
           </div>
         )}
       </div>
+      <Link 
+      to={"/rate"}
+      className='max-w-6xl mx-auto p-3 text-blue-700 sm:text-xl text-lg fong-bold  flex flex-col gap-8 my-5'>
+        Rate Us
+      </Link>
     </div>
   );
 }

@@ -347,7 +347,6 @@ const UpdateListing = () => {
           </div>
 
           <p className='text-red-600 sm:text-xl text-lg md:text-2xl font-semibold '>{imageUploadError && imageUploadError}</p>
-
           <div className='flex flex-col w-full md:gap-10 sm:gap-6 gap-4'>
             {
               formData && formData.imageUrls && formData.imageUrls.length > 0 && formData.imageUrls.map((url, index) => (
@@ -355,7 +354,6 @@ const UpdateListing = () => {
                   className='flex flex-row justify-around md:gap-6 gap-3 sm:gap-4  items-center border   p-4'
                   key={url}
                 >
-
                   <div className='relative'>
                     <img
                       src={url}
@@ -364,7 +362,7 @@ const UpdateListing = () => {
                       className=' h-28 w-28  md:h-52 md:w-52 sm:h-36  sm:w-36 object-cover  rounded-lg '
 
                     />
-                    
+
                     <button
                       onClick={(e) => { selectAsMainPhoto(e, url) }}
                       className='cursor-pointer absolute bottom-1 left-1 p-2 bg-black bg-opacity-60 text-white rounded-2xl ' >

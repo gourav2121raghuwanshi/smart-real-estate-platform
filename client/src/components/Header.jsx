@@ -21,7 +21,8 @@ const Header = () => {
     if(searchTermfromUrl){
       setSearchTerm(searchTermfromUrl);
     }
-  }, [location.search])
+  }, [location.search]);
+  
   return (
     <header className='bg-slate-200 shadow-md '>
       <div className='flex justify-between items-center max-w-7xl  mx-auto p-3'>

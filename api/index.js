@@ -5,6 +5,7 @@ const path = require('path');
 const userroute = require('./routes/userRoute.js')
 const authRouter = require('./routes/authRoute.js');
 const listingRouter = require('./routes/listingRouter.js');
+const reviewRatingRouter=require("./routes/reviewRatingRoute.js")
 const dbConnect=require('./utils/databaseConnect.js')
 const cors = require('cors');
 require('dotenv').config();
@@ -24,6 +25,7 @@ app.listen(process.env.PORT, () => {
 app.use('/api/user', userroute);
 app.use('/api/auth', authRouter);
 app.use('/api/listing', listingRouter);
+app.use('/api/rateus', reviewRatingRouter);
 
 app.use(express.static(path.join(__dirname, '/client/dist')));
 

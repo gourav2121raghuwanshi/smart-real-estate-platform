@@ -30,6 +30,7 @@ const Contact = ({ listing }) => {
     };
     getLandlord();
   }, [listing.userRef]);
+  
   return (
     <div className="">
       {landlord && (

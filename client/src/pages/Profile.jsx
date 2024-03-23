@@ -12,9 +12,8 @@ import {
   signoutUserStart,
   signoutUserSuccess,
   signoutUserFailure
-} from "../redux/user/userSlice"
-import { useDispatch } from 'react-redux'
-// import { toast } from 'react-toastify'
+} from "../redux/user/userSlice";
+import { useDispatch } from 'react-redux';
 import {
   getDownloadURL,
   getStorage,
@@ -24,6 +23,7 @@ import {
 import { app } from '../firebase'
 import axios from 'axios'
 import { Link } from 'react-router-dom'
+
 export default function Profile() {
 
   const { currentUser, loading, error } = useSelector((state) => state.user);
@@ -186,7 +186,6 @@ export default function Profile() {
           className='rounded-full h-20 w-20  sm:h-40 sm:w-40 object-cover cursor-pointer mt-4 self-center'
         />
         <p className='text-sm self-center'>
-
           {
             fileUploadError ?
               <span className='text-red-700 text-xl font-semibold'>Error in Image Uploading (image must be less than 2Mb )</span> :
@@ -194,7 +193,6 @@ export default function Profile() {
                 <span className='text-slate-700 text-xl font-semibold'> Uploading {filePerc}% </span> :
                 filePerc === 100 ? <span className='text-green-700 text-xl font-semibold'>Image Uploaded Successfully</span> : ""
           }
-
         </p>
         <input
           type='text'
@@ -238,7 +236,8 @@ export default function Profile() {
       <div className='w-full flex justify-center items-center'>
         <button
           onClick={handleShowListings}
-          className='text-green-900 w-fit mx-auto sm:text-2xl text-lg font-semibold rounded-lg p-1 sm:p-5 uppercase hover:opacity-95 disabled:opacity-80 '>Show Listings
+          className='text-green-900 w-fit mx-auto sm:text-2xl text-lg font-semibold rounded-lg p-1 sm:p-5 uppercase hover:opacity-95 disabled:opacity-80 '>
+          Show Listings
         </button>
       </div>
 

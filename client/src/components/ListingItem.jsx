@@ -48,12 +48,7 @@ const ListingItem = ({ listing }) => {
                         }
                     </div>
                 </div>
-
-
             </div>
-
-
-
         </Link>
     </div>
 }
