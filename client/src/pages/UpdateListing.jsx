@@ -29,6 +29,8 @@ const UpdateListing = () => {
     offer: false,
     imageUrls: [],
     userRef: "",
+    area:50,
+    bhk:1
   })
   const [imageUploadError, setImageUploadError] = useState(false);
   const [uploading, setUploading] = useState(false);
@@ -289,6 +291,20 @@ const UpdateListing = () => {
                 className='p-3  md:text-2xl sm:text-xl text-lg border border-gray-300 rounded-lg ' />
               <p className='sm:text-xl text-lg font-semibold  text-slate-700'>Baths</p>
             </div>
+            
+            <div className='flex gap-5 items-center text-lg'>
+              <input id="bhk"
+                type="number"
+                min='1'
+                max='100'
+                required
+                onChange={handleChange}
+                value={formData.bhk}
+
+                className='p-3  md:text-2xl sm:text-xl text-lg border border-gray-300 rounded-lg ' />
+              <p className='sm:text-xl text-lg font-semibold  text-slate-700'>BHK</p>
+            </div>
+            
             <div className='flex gap-5 items-center '>
               <input id="regularPrice"
                 onChange={handleChange}
@@ -321,6 +337,24 @@ const UpdateListing = () => {
                 <p className='sm:text-lg text-sm'>(₹ / Month)</p>
               </div>
             </div>
+            
+            <div className='flex gap-5 items-center '>
+              <input
+                onChange={handleChange}
+                value={formData.area}
+                id="area"
+                type="number"
+                min='10'
+                max='50000000'
+                required
+                className='p-3  md:text-2xl sm:text-xl  border text-lg border-gray-300 rounded-lg ' />
+              <div className='text-xl font-semibold text-slate-700 flex flex-col items-center gap-1' >
+                <p className='sm:text-xl text-lg font-semibold  text-slate-700'>  Area </p>
+                <p className='sm:text-lg text-sm'>(square-feet)</p>
+              </div>
+            </div>
+            
+
           </div>
         </div>
         {/* second side */}

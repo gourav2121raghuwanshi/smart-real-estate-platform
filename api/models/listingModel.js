@@ -1,3 +1,4 @@
+const { truncate } = require('fs/promises');
 const mongoose = require('mongoose')
 
 const listingSchema = new mongoose.Schema(
@@ -5,12 +6,10 @@ const listingSchema = new mongoose.Schema(
         name: {
             type: String,
             required: true,
-
         },
         description: {
             type: String,
             required: true,
-
         },
         address: {
             type: String,
@@ -57,6 +56,18 @@ const listingSchema = new mongoose.Schema(
             required: true,
             unique:false
         },
+        bhk:{
+            type: Number,
+            required: true,
+        },
+        area:{
+            type: Number,
+            required: true,
+        },
+        city:{
+            type:String,
+            required: true
+        }
     }
     , { timestamps: true }
 );

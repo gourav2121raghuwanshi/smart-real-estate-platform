@@ -14,6 +14,7 @@ import {
     FaParking,
     FaShare,
 } from 'react-icons/fa';
+import { MdSquareFoot } from "react-icons/md";
 import Contact from '../components/Contact';
 const Listing = () => {
 
@@ -106,9 +107,13 @@ const Listing = () => {
                             {listing.type === 'rent' && ' / month'}
 
                         </p>
-                        <p className='flex items-center   gap-2 text-slate-600  text-sm'>
-                            <FaMapMarkerAlt className='text-green-700' />
+                        <p className='flex items-center   gap-2 text-slate-600  text-sm font-semibold'>
+                            <FaMapMarkerAlt className='text-green-700 ' />
                             {listing.address}
+                        </p>
+                        <p className='flex items-center   gap-2 text-slate-600  text-sm font-semibold'>
+                            <MdSquareFoot  className='text-green-700 text-md size-5 font-semibold' />
+                            {listing.area} sq ft
                         </p>
                         <div className='flex gap-4'>
                             <p className='bg-red-900 w-full max-w-[200px] text-white 

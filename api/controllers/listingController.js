@@ -98,9 +98,10 @@ exports.getListings = async (req, res, next) => {
         const order = req.query.order || 'desc';
 
         const listings = await Listing.find({
-            name: {
-                $regex: searchTerm, $options: 'i'
-            },
+            $or: [
+                { name: { $regex: searchTerm, $options: 'i' } },
+                { city: { $regex: searchTerm, $options: 'i' } }
+            ],
             offer,
             furnished,
             parking,
@@ -116,3 +117,14 @@ exports.getListings = async (req, res, next) => {
         next(err);
     }
 };
+
+
+// name: {
+//     $regex: searchTerm, $options: 'i'
+// },
+
+// replaced by : 
+//  $or: [
+//     { name: { $regex: searchTerm, $options: 'i' } },
+//     { city: { $regex: searchTerm, $options: 'i' } }
+// ],

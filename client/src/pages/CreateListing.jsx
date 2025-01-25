@@ -15,7 +15,6 @@ const CreateListing = () => {
     const [files, setFiles] = useState([]);
     const navigate = useNavigate();
     const [formData, setFormData] = useState({
-
         name: "",
         description: "",
         address: "",
@@ -29,6 +28,9 @@ const CreateListing = () => {
         offer: false,
         imageUrls: [],
         userRef: "",
+        bhk: 1,
+        area: 50,
+        city: ""
     })
     const [imageUploadError, setImageUploadError] = useState(false);
     const [uploading, setUploading] = useState(false);
@@ -118,6 +120,13 @@ const CreateListing = () => {
                 [e.target.id]: e.target.value
             })
         }
+        if (e.target.id === 'city') {
+            setFormData({
+                ...formData,
+                city: e.target.value // Update the city when the user selects a city
+            });
+        }
+        // console.log(formData);
     }
 
     const handleSubmit = async (e) => {
@@ -193,6 +202,22 @@ const CreateListing = () => {
                         placeholder='Address'
                         id='address'
                         required />
+                    <select
+                        onChange={handleChange}
+                        value={formData.city}
+                        className="border p-3 rounded-lg md:text-2xl sm:text-xl text-lg"
+                        required
+                        id="city"
+                    >
+                        <option value="" disabled>Select City</option>
+                        <option value="mumbai">Mumbai</option>
+                        <option value="delhi">Delhi</option>
+                        <option value="pune">Pune</option>
+                        <option value="bangalore">Bangalore</option>
+                        <option value="hyderabad">Hyderabad</option>
+                        <option value="chennai">Chennai</option>
+                        <option value="kolkata">Kolkata</option>
+                    </select>
                     <div className='flex flex-wrap gap-5 '>
                         <div className='flex gap-5 items-center'>
                             <input
@@ -270,6 +295,21 @@ const CreateListing = () => {
                                 className='p-3  md:text-2xl sm:text-xl text-lg border border-gray-300 rounded-lg ' />
                             <p className='sm:text-xl text-lg font-semibold  text-slate-700'>Baths</p>
                         </div>
+
+                        <div className='flex gap-5 items-center '>
+                            <input
+                                onChange={handleChange}
+                                value={formData.bhk}
+                                id="bhk"
+                                type="number"
+                                min='1'
+                                max='100'
+                                required
+                                className='p-3  md:text-2xl sm:text-xl text-lg border border-gray-300 rounded-lg ' />
+                            <p className='sm:text-xl text-lg font-semibold  text-slate-700'>BHK</p>
+                        </div>
+
+
                         <div className='flex gap-5 items-center '>
                             <input id="regularPrice"
                                 onChange={handleChange}
@@ -302,6 +342,23 @@ const CreateListing = () => {
                                 <p className='sm:text-lg text-sm'>(₹ / Month)</p>
                             </div>
                         </div>
+
+                        <div className='flex gap-5 items-center '>
+                            <input
+                                onChange={handleChange}
+                                value={formData.area}
+                                id="area"
+                                type="number"
+                                min='1'
+                                max='500000'
+                                required
+                                className='p-3  md:text-2xl sm:text-xl  border text-lg border-gray-300 rounded-lg ' />
+                            <div className='text-xl font-semibold text-slate-700 flex flex-col items-center gap-1' >
+                                <p className='sm:text-xl text-lg font-semibold  text-slate-700'>  Area </p>
+                                <p className='sm:text-lg text-sm'>(square-feet)</p>
+                            </div>
+                        </div>
+
                     </div>
                 </div>
                 {/* second side */}

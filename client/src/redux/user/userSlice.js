@@ -1,12 +1,13 @@
-import { createSlice } from '@reduxjs/toolkit'
+import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
     currentUser: null,
     error: null,
     loading: false,
 };
+
 const userSlice = createSlice({
-    name: "user",
+    name: "user",   //by using useSelector((state) => state.user) we will be accessing the user
     initialState,
     reducers: {
         signInStart: (state) => {
@@ -71,8 +72,8 @@ const userSlice = createSlice({
         },
 
     }
+});
 
-})
 export const {
     signInStart,
     signInSuccess,

@@ -45,3 +45,22 @@ app.use((err, req, res, next) => {
 
 
 
+
+// const Listing=require("./models/listingModel.js")
+// const updateListings = async () => {
+//   try {
+ 
+
+//     const result = await Listing.updateMany(
+//       { city: { $exists: false } }, // Match documents that don't have the 'area' field
+//       { $set: {city:"Mumbai" } } // Add 'area' and 'bhk' fields with value 0
+//     );
+
+//     console.log(`${result.modifiedCount} listings updated successfully.`);
+//   } catch (error) {
+//     console.error('Error updating listings:', error);
+//     mongoose.connection.close();
+//   }
+// };
+
+// updateListings();
