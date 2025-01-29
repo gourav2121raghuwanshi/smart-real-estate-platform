@@ -1,8 +1,7 @@
 const errorHandler = require('../utils/error.js')
 const Listing = require('../models/listingModel.js')
 const axios = require('axios');
-const pricePredictorModelUrl_rent = 'https://predict-rent.onrender.com/predict-rent';
-const pricePredictorModelUrl_sale = 'https://predict-sale.onrender.com/predict-sale';
+const pricePredictorModelUrl_rent_sale = 'https://house-price-prediction-model-g4ex.onrender.com';
 /*sale
 #  {
 {
@@ -49,7 +48,7 @@ exports.createListing = async (req, res, next) => {
 
         if (productData.type === "sale") {
             // console.log(data_sale);
-            const response = await axios.post(pricePredictorModelUrl_sale, data_sale);
+            const response = await axios.post(pricePredictorModelUrl_rent_sale+"/predict-sale", data_sale);
             // console.log(response.data.predicted_price);
             productData = {
                 predictionPrice: response.data.predicted_price,
@@ -57,7 +56,7 @@ exports.createListing = async (req, res, next) => {
             };
         } else {
             console.log(data_rent);
-            const response = await axios.post(pricePredictorModelUrl_rent,data_rent);
+            const response = await axios.post(pricePredictorModelUrl_rent_sale+"/predict-rent",data_rent);
             // console.log(response.data.predicted_price);
             productData = {
                 predictionPrice: response.data.predicted_price, // Adjust this key for rent
@@ -124,7 +123,7 @@ exports.updateListing = async (req, res, next) => {
         };
         if (listing.type === "sale") {
             // console.log(data_sale);
-            const response = await axios.post(pricePredictorModelUrl_sale, data_sale);
+            const response = await axios.post(pricePredictorModelUrl_rent_sale+"/predict-sale", data_sale);
             console.log(response.data.predicted_price);
             listing = {
                 predictionPrice: response.data.predicted_price,
@@ -132,7 +131,7 @@ exports.updateListing = async (req, res, next) => {
             };
         } else {
             // console.log(data_rent);
-            const response = await axios.post(pricePredictorModelUrl_rent,data_rent);
+            const response = await axios.post(pricePredictorModelUrl_rent_sale+"/predict-rent",data_rent);
             console.log(response.data.predicted_price);
             listing = {
                 predictionPrice: response.data.predicted_price, // Adjust this key for rent
