@@ -30,7 +30,9 @@ const UpdateListing = () => {
     imageUrls: [],
     userRef: "",
     area:50,
-    bhk:1
+    bhk:1,
+    city:""
+
   })
   const [imageUploadError, setImageUploadError] = useState(false);
   const [uploading, setUploading] = useState(false);
@@ -120,6 +122,12 @@ const UpdateListing = () => {
         [e.target.id]: e.target.value
       })
     }
+    if (e.target.id === 'city') {
+      setFormData({
+          ...formData,
+          city: e.target.value // Update the city when the user selects a city
+      });
+  }
   }
 
   const handleSubmit = async (e) => {
@@ -214,6 +222,32 @@ const UpdateListing = () => {
             placeholder='Address'
             id='address'
             required />
+                  <select
+                        onChange={handleChange}
+                        value={formData.city}
+                        className="border p-3 rounded-lg md:text-2xl sm:text-xl text-lg"
+                        required
+                        id="city"
+                    >
+                        <option value="" disabled>Select City</option>
+                        <option value="Mumbai">Mumbai</option>
+                        <option value="Delhi">Delhi</option>
+                        <option value="Pune">Pune</option>
+                        <option value="Bangalore">Bangalore</option>
+                        <option value="Hyderabad">Hyderabad</option>
+                        <option value="Chennai">Chennai</option>
+                        <option value="Kolkata">Kolkata</option>
+                        <option value="Haryana">Haryana</option>
+                        <option value="Bhopal">Bhopal</option>
+                        <option value="Surat">Surat</option>
+                        <option value="Goa">Goa</option>
+                        <option value="Ahmedabad">Ahmedabad</option>
+                        <option value="Gurgaon">Gurgaon</option>
+                        <option value="Noida">Noida</option>
+                        <option value="Indore">Indore</option>
+                        <option value="Jaipur">Jaipur</option>
+                    </select>
+                
           <div className='flex flex-wrap gap-5 '>
             <div className='flex gap-5 items-center'>
               <input
@@ -311,7 +345,7 @@ const UpdateListing = () => {
                 value={formData.regularPrice}
                 type="number"
                 min='1500'
-                max='50000000'
+                max='500000000000'
                 required
                 className='p-3 border  md:text-2xl sm:text-xl text-lg border-gray-300 rounded-lg ' />
 
@@ -329,7 +363,7 @@ const UpdateListing = () => {
                 id="discountPrice"
                 type="number"
                 min='1500'
-                max='50000000'
+                max='50000000000'
                 required
                 className='p-3  md:text-2xl sm:text-xl  border text-lg border-gray-300 rounded-lg ' />
               <div className='text-xl font-semibold text-slate-700 flex flex-col items-center gap-1' >

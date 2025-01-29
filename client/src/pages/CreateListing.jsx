@@ -210,13 +210,22 @@ const CreateListing = () => {
                         id="city"
                     >
                         <option value="" disabled>Select City</option>
-                        <option value="mumbai">Mumbai</option>
-                        <option value="delhi">Delhi</option>
-                        <option value="pune">Pune</option>
-                        <option value="bangalore">Bangalore</option>
-                        <option value="hyderabad">Hyderabad</option>
-                        <option value="chennai">Chennai</option>
-                        <option value="kolkata">Kolkata</option>
+                        <option value="Mumbai">Mumbai</option>
+                        <option value="Delhi">Delhi</option>
+                        <option value="Pune">Pune</option>
+                        <option value="Bangalore">Bangalore</option>
+                        <option value="Hyderabad">Hyderabad</option>
+                        <option value="Chennai">Chennai</option>
+                        <option value="Kolkata">Kolkata</option>
+                        <option value="Haryana">Haryana</option>
+                        <option value="Bhopal">Bhopal</option>
+                        <option value="Surat">Surat</option>
+                        <option value="Goa">Goa</option>
+                        <option value="Ahmedabad">Ahmedabad</option>
+                        <option value="Gurgaon">Gurgaon</option>
+                        <option value="Noida">Noida</option>
+                        <option value="Indore">Indore</option>
+                        <option value="Jaipur">Jaipur</option>
                     </select>
                     <div className='flex flex-wrap gap-5 '>
                         <div className='flex gap-5 items-center'>
@@ -334,7 +343,7 @@ const CreateListing = () => {
                                 id="discountPrice"
                                 type="number"
                                 min='1500'
-                                max='50000000'
+                                max='50000000000'
                                 required
                                 className='p-3  md:text-2xl sm:text-xl  border text-lg border-gray-300 rounded-lg ' />
                             <div className='text-xl font-semibold text-slate-700 flex flex-col items-center gap-1' >
@@ -350,7 +359,7 @@ const CreateListing = () => {
                                 id="area"
                                 type="number"
                                 min='1'
-                                max='500000'
+                                max='5000000000'
                                 required
                                 className='p-3  md:text-2xl sm:text-xl  border text-lg border-gray-300 rounded-lg ' />
                             <div className='text-xl font-semibold text-slate-700 flex flex-col items-center gap-1' >

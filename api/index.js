@@ -9,7 +9,8 @@ const reviewRatingRouter=require("./routes/reviewRatingRoute.js")
 const dbConnect=require('./utils/databaseConnect.js')
 const cors = require('cors');
 require('dotenv').config();
-
+// const Listing = require("./models/listingModel.js");
+// const axios = require("axios");
 dbConnect();
 
 __dirname = path.resolve();
@@ -54,6 +55,87 @@ app.use((err, req, res, next) => {
 //     const result = await Listing.updateMany(
 //       { city: { $exists: false } }, // Match documents that don't have the 'area' field
 //       { $set: {city:"Mumbai" } } // Add 'area' and 'bhk' fields with value 0
+//     );
+
+//     console.log(`${result.modifiedCount} listings updated successfully.`);
+//   } catch (error) {
+//     console.error('Error updating listings:', error);
+//     mongoose.connection.close();
+//   }
+// };
+
+// updateListings();
+
+
+// const Listing = require("./models/listingModel.js");
+// const axios = require("axios");
+
+// const pricePredictorModelUrl_rent = 'https://predict-rent.onrender.com/predict-rent';
+// const pricePredictorModelUrl_sale = 'https://predict-sale.onrender.com/predict-sale';
+
+// const updateListings = async () => {
+//   try {
+  
+//   const listings = await Listing.find({ predictionPrice: { $exists: false } });
+
+//     for (let listing of listings) {
+//       const data_sale = {
+//             Area: listing.area,
+//             City: listing.city,
+//             Price:listing.discountPrice,
+//             Title:listing.name+" "+listing.address,
+//             bhk:listing.bhk,
+//         };
+
+//         const data_rent = {
+//             bhk: listing.bhk,
+//             Address:listing.name+" "+listing.address,
+//             city: listing.city,
+//             BathRoom: listing.bathroom,
+//             Furnished: productData.furnished===true?1:2,
+//         };
+
+//       let predictedPrice;
+
+//       if (listing.type === 'sale') {
+//         const response = await axios.post(pricePredictorModelUrl_sale, data_sale);
+//         predictedPrice = response.data.predicted_price;
+//         console.log(predictedPrice)
+//       } else {
+//         const response = await axios.post(pricePredictorModelUrl_rent, data_rent);
+//         predictedPrice = response.data.predicted_price;
+//         console.log(predictedPrice)
+//       }
+//       // Update the listing with the predicted price
+//       const result = await Listing.updateOne(
+//         { _id: listing._id },
+//         { $set: { predictionPrice: predictedPrice } }
+//       );
+
+//       console.log(`${result.nModified} listing(s) updated with prediction price.`);
+//     }
+//   } catch (error) {
+//     console.error('Error updating listings:', error);
+//   }
+// };
+
+// Call the updateListings function to perform the update
+// updateListings();
+
+
+// const Listing = require("./models/listingModel.js");
+
+// const updateListings = async () => {
+//   try {
+//     const result = await Listing.updateMany(
+//       { address: /Ju Beach/ },  // Match listings where 'address' contains 'Ju Beach'
+//       [
+//         { 
+//           $set: { 
+//             address: { $replaceOne: { input: "$address", find: "Ju Beach", replacement: "Juhu" } } 
+//           }
+//         }
+//       ]
 //     );
 
 //     console.log(`${result.modifiedCount} listings updated successfully.`);

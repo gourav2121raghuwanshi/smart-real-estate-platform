@@ -67,6 +67,11 @@ const listingSchema = new mongoose.Schema(
         city:{
             type:String,
             required: true
+        },
+        predictionPrice:{
+            type: Number,
+            required: false,
+            default: null
         }
     }
     , { timestamps: true }

@@ -100,16 +100,20 @@ const Listing = () => {
                     )}
                     <div className='flex flex-col max-w-4xl mx-auto p-3  md:gap-4 sm:gap-3 gap-2'>
                         <p className='text-2xl font-semibold'>
-                            {listing.name} - ₹{' '}
+                            {listing.name} - ₹{''}
                             {listing.offer
                                 ? listing.discountPrice.toLocaleString('en-US')
                                 : listing.regularPrice.toLocaleString('en-US')}
-                            {listing.type === 'rent' && ' / month'}
+                            {listing.type === 'rent' && '/month'}
 
                         </p>
                         <p className='flex items-center   gap-2 text-slate-600  text-sm font-semibold'>
                             <FaMapMarkerAlt className='text-green-700 ' />
                             {listing.address}
+                        </p>
+                        <p className='flex items-center   gap-2 text-slate-600  text-sm font-semibold'>
+                            <FaMapMarkerAlt className='text-green-700 ' />
+                           Our Model's Predicted Price : ₹{Math.ceil(listing.predictionPrice)} {listing.type === 'rent' && ' / month'}
                         </p>
                         <p className='flex items-center   gap-2 text-slate-600  text-sm font-semibold'>
                             <MdSquareFoot  className='text-green-700 text-md size-5 font-semibold' />
