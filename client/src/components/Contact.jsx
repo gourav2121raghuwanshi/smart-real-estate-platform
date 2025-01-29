@@ -3,6 +3,7 @@ import axios from "axios";
 import { useState } from "react";
 // import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
+import { useSelector } from 'react-redux';
 import { useDispatch } from 'react-redux';
 import { useEffect } from "react";
 const Contact = ({ listing }) => {
