@@ -22,7 +22,7 @@ app.use(cookieParser());
 // app.use(cors('*'));
 app.use(
 	cors({
-		origin: "https://reat-estate-mern.vercel.app",
+		origin: "https://findyourhome.vercel.app",
 		credentials: true,
 	})
 )
