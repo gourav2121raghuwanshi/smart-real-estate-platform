@@ -8,6 +8,7 @@ export default function OAuth() {
   const dispatch = useDispatch();
   
   const buri="https://reat-estate-mern-backend.vercel.app/api"
+  // const buri="http://localhost:3000/api"
   const navigate = useNavigate();
   const handleGoogleClick = async () => {
     try {
@@ -15,8 +16,10 @@ export default function OAuth() {
       const auth = getAuth(app);
       const result = await signInWithPopup(auth, provider);
 
-      const res = await fetch(buri+'/auth/google', {
+
+      const res = await fetch(buri + '/auth/google', {
         method: 'POST',
+        credentials: 'include', // Use this line only once
         headers: {
           'Content-Type': 'application/json',
         },
@@ -27,6 +30,7 @@ export default function OAuth() {
         }),
       });
       const data = await res.json();
+    
       document.cookie = `access_token=${data.token}; path=/`;
       dispatch(signInSuccess(data));
       navigate('/');

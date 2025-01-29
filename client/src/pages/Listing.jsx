@@ -27,6 +27,7 @@ const Listing = () => {
     const [copied, setCopied] = useState(false);
     const [contact, setContact] = useState(false);
     const buri="https://reat-estate-mern-backend.vercel.app/api"
+    //  const buri="http://localhost:3000/api"
  
     // console.log(listing.userRef);
     // console.log(currentUser._id)
@@ -37,7 +38,9 @@ const Listing = () => {
                 setLoading(true);
                 const listingId = params.listingId;
                 console.log(listingId)
-                const res = await axios.get(buri+`/listing/get/${listingId}`);
+                const res = await axios.get(buri+`/listing/get/${listingId}`,{
+                    withCredentials:true
+                });
                 const data = res.data;
                 console.log("in listing : ", data);
                 if (data.success === false) {

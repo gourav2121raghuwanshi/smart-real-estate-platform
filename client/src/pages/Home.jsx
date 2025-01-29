@@ -11,13 +11,17 @@ export default function Home() {
   const [saleListings, setSaleListings] = useState([]);
   const [rentListings, setRentListings] = useState([]);
   const buri="https://reat-estate-mern-backend.vercel.app/api"
+  //  const buri="http://localhost:3000/api"
  
   SwiperCore.use([Navigation]);
   console.log(offerListings);
   useEffect(() => {
     const fetchOfferListings = async () => {
       try {
-        const res = await fetch(buri+'/listing/get?offer=true&limit=4');
+        const res = await fetch(buri+'/listing/get?offer=true&limit=4',{
+          method: 'GET',  
+          credentials: 'include'  
+      });
         const data = await res.json();
         setOfferListings(data);
         fetchRentListings();
@@ -27,7 +31,11 @@ export default function Home() {
     };
     const fetchRentListings = async () => {
       try {
-        const res = await fetch(buri+'/listing/get?type=rent&limit=4');
+        const res = await fetch(buri + '/listing/get?type=rent&limit=4', {
+          method: 'GET',  
+          credentials: 'include'  
+      });
+
         const data = await res.json();
         setRentListings(data);
         fetchSaleListings();
@@ -38,7 +46,12 @@ export default function Home() {
 
     const fetchSaleListings = async () => {
       try {
-        const res = await fetch(buri+'/listing/get?type=sale&limit=4');
+       
+        const res = await fetch(buri + '/listing/get?type=sale&limit=4', {
+          method: 'GET',  
+          credentials: 'include'  
+      });
+
         const data = await res.json();
         setSaleListings(data);
       } catch (error) {

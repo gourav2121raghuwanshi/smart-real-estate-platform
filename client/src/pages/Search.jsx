@@ -17,6 +17,7 @@ const Search = () => {
     const [loading, setLoading] = useState(false);
     const [listings, setListings] = useState([]);
     const buri="https://reat-estate-mern-backend.vercel.app/api"
+    //  const buri="http://localhost:3000/api"
  
     const [showMore, setShowMore] = useState(false);
     // console.log("listings are : ", listings);
@@ -72,7 +73,9 @@ const Search = () => {
                 setLoading(true);
                 setShowMore(false);
                 const searchQuery = urlParams.toString();
-                const res = await axios.get(buri+`/listing/get?${searchQuery}`);
+                const res = await axios.get(buri+`/listing/get?${searchQuery}`,{
+                    withCredentials:true
+                });
                 const data = await res.data;
                 if (data.success === false) {
                     setLoading(false);
@@ -104,7 +107,9 @@ const Search = () => {
         urlParams.set('startIndex', startIndex);
         const searchQuery = urlParams.toString();
 
-        const res = await axios.get(buri+`/listing/get?${searchQuery}`);
+        const res = await axios.get(buri+`/listing/get?${searchQuery}`,{
+            withCredentials:true
+        });
         const data = await res.data;
         if (data.length < 9) {
             setShowMore(false);

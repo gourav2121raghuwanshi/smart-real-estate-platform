@@ -12,6 +12,7 @@ import { useSelector } from 'react-redux';
 import { useNavigate, useParams } from 'react-router-dom';
 const UpdateListing = () => {
   const buri="https://reat-estate-mern-backend.vercel.app/api"
+  //  const buri="http://localhost:3000/api"
  
   const { currentUser } = useSelector((state) => state.user);
   const [files, setFiles] = useState([]);
@@ -147,6 +148,7 @@ const UpdateListing = () => {
         headers: {
           'Content-Type': 'application/json',
         },
+        withCredentials:true
       });
 
       const data = await res.data;
@@ -170,7 +172,9 @@ const UpdateListing = () => {
     const fetchListing = async () => {
       const listingId = params.listingId;
       // console.log(listingId)
-      const res = await axios.get(buri+`/listing/get/${listingId}`);
+      const res = await axios.get(buri+`/listing/get/${listingId}`,{
+        withCredentials:true
+      });
 
       const data = await res.data;
       if (data.success === false) {

@@ -15,6 +15,7 @@ const SignUp = () => {
     password: '',
   });
   const buri="https://reat-estate-mern-backend.vercel.app/api"
+  //  const buri="http://localhost:3000/api"
  
   const [errorr, setError] = useState(null);
   const [loadingg, setLoading] = useState(false);
@@ -39,6 +40,7 @@ const SignUp = () => {
         headers: {
           'Content-Type': 'application/json',
         },
+        withCredentials: true
       });
   
       const data = await res.data; 
@@ -52,7 +54,7 @@ const SignUp = () => {
   
       setLoading(false);
       setError(null)
-      dispatch(signUpSuccess(data));
+      dispatch(signUpSuccess(data.rest));
       // navigate('/sign-in')
       navigate('/')
       // console.log(data);

@@ -42,6 +42,7 @@ export default function Profile() {
   };
 
   const buri="https://reat-estate-mern-backend.vercel.app/api"
+  //  const buri="http://localhost:3000/api"
  
   useEffect(() => {
     if (file) {
@@ -58,6 +59,7 @@ export default function Profile() {
         headers: {
           'Content-Type': 'application/json',
         },
+        withCredentials:true
       });
       console.log(res);
       const data = await res.data;
@@ -104,7 +106,9 @@ export default function Profile() {
     try {
       dispatch(deleteUserStart());
       console.log(currentUser._id);
-      const res = await axios.delete(buri+`/user/delete/${currentUser._id}`);
+      const res = await axios.delete(buri+`/user/delete/${currentUser._id}`,{
+        withCredentials:true
+      });
       const data = await res.data;
 
       if (data.success === false) {
@@ -124,12 +128,15 @@ export default function Profile() {
   const handleSignOut = async () => {
     try {
       dispatch(signoutUserStart())
-      const res = await axios.get(buri+`/auth/signout`);
+      const res = await axios.get(buri+`/auth/signout`,{
+        withCredentials:true
+      });
       const data = await res.data;
       if (data.success === false) {
         dispatch(signoutUserFailure(data.message))
         return;
       }
+      document.cookie = 'access_token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT;';
       dispatch(signoutUserSuccess(data))
     }
     catch (err) {
@@ -140,8 +147,13 @@ export default function Profile() {
 
   const handleShowListings = async () => {
     try {
-      setshowListingError(false);
-      const res = await fetch(buri+`/user/listings/${currentUser._id}`);
+      setshowListingError(false);const res = await fetch(`${buri}/user/listings/${currentUser._id}`, {
+        method: 'GET',  
+        credentials: 'include', 
+        headers: {
+            'Content-Type': 'application/json'  
+        }
+    });
       const data = await res.json();
       console.log(data);
       if (data.success === false) {
@@ -157,7 +169,9 @@ export default function Profile() {
 
   const handleListingDelete = async (listingId) => {
     try {
-      const res = await axios.delete(buri+`/listing/delete/${listingId}`);
+      const res = await axios.delete(buri+`/listing/delete/${listingId}`,{
+        withCredentials:true
+      });
       const data = await res.data;
       if (data.success === false) {
         console.log(data.message);

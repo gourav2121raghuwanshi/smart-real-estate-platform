@@ -15,14 +15,15 @@ dbConnect();
 
 // __dirname = path.resolve();
 
-
+// origin: "http://localhost:5175/",
+// origin: "https://findyourhome.vercel.app",
 const app = express();
 app.use(express.json())
 app.use(cookieParser());
 // app.use(cors('*'));
 app.use(
 	cors({
-		origin: "https://reat-estate-mern.vercel.app",
+		origin: "https://findyourhome.vercel.app",
 		credentials: true,
 	})
 )
@@ -31,8 +32,6 @@ app.use(
 app.listen(process.env.PORT, () => {
   console.log(`server is running on port ${process.env.PORT}`);
 })
-
-
 
 
 

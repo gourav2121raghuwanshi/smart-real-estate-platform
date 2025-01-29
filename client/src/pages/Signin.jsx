@@ -13,6 +13,7 @@ const Signin = () => {
     password: '',
   });
   const buri="https://reat-estate-mern-backend.vercel.app/api"
+  //  const buri="http://localhost:3000/api"
  
   const { loading, error } = useSelector((state) => state.user);
   const navigate = useNavigate();
@@ -32,6 +33,7 @@ const Signin = () => {
         headers: {
           'Content-Type': 'application/json',
         },
+        withCredentials: true, 
       });
       const data = await res.data;
       console.log("data is : ",data)
@@ -44,7 +46,8 @@ const Signin = () => {
       console.log(data.token);
       document.cookie = `access_token=${data.token}; path=/`;
       
-      dispatch(signInSuccess(data));
+      //console.log("user is : ",data)
+      dispatch(signInSuccess(data.rest));
       navigate('/')
 
     } catch (error) {
