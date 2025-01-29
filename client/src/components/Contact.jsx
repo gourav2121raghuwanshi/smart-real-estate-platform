@@ -9,6 +9,7 @@ const Contact = ({ listing }) => {
   const [message, setMessage] = useState("");
   //   const { currentUser } = useSelector((state) => state.user);
 
+  const buri="https://reat-estate-mern-backend.vercel.app"
   const onChange = (e) => {
     setMessage(e.target.value);
   };
@@ -16,7 +17,7 @@ const Contact = ({ listing }) => {
   useEffect(() => {
     const getLandlord = async () => {
       try {
-        const res = await axios.get(`/api/user/${listing.userRef}`);
+        const res = await axios.get(buri+`/user/${listing.userRef}`);
         const data = await res.data;
         if (data.success === false) {
           console.log(data.message);

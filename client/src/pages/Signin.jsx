@@ -12,6 +12,8 @@ const Signin = () => {
     email: '',
     password: '',
   });
+  const buri="https://reat-estate-mern-backend.vercel.app"
+ 
   const { loading, error } = useSelector((state) => state.user);
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -26,7 +28,7 @@ const Signin = () => {
     e.preventDefault();
     try {
       dispatch(signInStart());
-      const res = await axios.post('/api/auth/signin', formdata, {
+      const res = await axios.post(buri+'/auth/signin', formdata, {
         headers: {
           'Content-Type': 'application/json',
         },

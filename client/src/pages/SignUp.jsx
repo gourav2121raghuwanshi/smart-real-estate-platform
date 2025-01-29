@@ -14,6 +14,8 @@ const SignUp = () => {
     email: '',
     password: '',
   });
+  const buri="https://reat-estate-mern-backend.vercel.app"
+ 
   const [errorr, setError] = useState(null);
   const [loadingg, setLoading] = useState(false);
   const navigate = useNavigate();
@@ -33,7 +35,7 @@ const SignUp = () => {
   
     try {
       dispatch(signUpStart());
-      const res = await axios.post('/api/auth/signup', formdata, {
+      const res = await axios.post(buri+'/auth/signup', formdata, {
         headers: {
           'Content-Type': 'application/json',
         },

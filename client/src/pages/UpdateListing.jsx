@@ -11,6 +11,8 @@ import { useSelector } from 'react-redux';
 
 import { useNavigate, useParams } from 'react-router-dom';
 const UpdateListing = () => {
+  const buri="https://reat-estate-mern-backend.vercel.app"
+ 
   const { currentUser } = useSelector((state) => state.user);
   const [files, setFiles] = useState([]);
   const navigate = useNavigate();
@@ -138,7 +140,7 @@ const UpdateListing = () => {
       // console.log(currentUser._id);
       setLoading(true);
       setError(false);
-      const res = await axios.post(`/api/listing/update/${params.listingId}`, {
+      const res = await axios.post(buri+`/listing/update/${params.listingId}`, {
         ...formData,
         userRef: currentUser._id,
       }, {
@@ -168,7 +170,7 @@ const UpdateListing = () => {
     const fetchListing = async () => {
       const listingId = params.listingId;
       // console.log(listingId)
-      const res = await axios.get(`/api/listing/get/${listingId}`);
+      const res = await axios.get(buri+`/listing/get/${listingId}`);
 
       const data = await res.data;
       if (data.success === false) {

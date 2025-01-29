@@ -9,11 +9,12 @@ const ReviewPage = () => {
     const [formData, setFormData] = useState({ rating: 0, review: "" });
     const { currentUser } = useSelector(state => state.user);
     const navigate = useNavigate();
-
+    const buri="https://reat-estate-mern-backend.vercel.app"
+ 
     useEffect(() => {
         const getReview = async () => {
             try {
-                const res = await axios.get(`/api/rateus/ReviewOfCurrentUser/${currentUser._id}`);
+                const res = await axios.get(buri+`/rateus/ReviewOfCurrentUser/${currentUser._id}`);
                 const data = await res.data;
                 console.log(data);
                 const review = data.newReviewAndRating[0].review;
@@ -42,7 +43,7 @@ const ReviewPage = () => {
         e.preventDefault();
         try {
             console.log('Form data:', formData);
-            await axios.post(`http://localhost:3000/api/rateus/updateReview/${currentUser._id}`, formData);
+            await axios.post(buri+`/rateus/updateReview/${currentUser._id}`, formData);
             setFormData(prevData => ({
                 ...prevData,
                 rating: 0,

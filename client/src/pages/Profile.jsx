@@ -41,6 +41,8 @@ export default function Profile() {
     setFormData({ ...formData, [e.target.id]: e.target.value });
   };
 
+  const buri="https://reat-estate-mern-backend.vercel.app"
+ 
   useEffect(() => {
     if (file) {
       handleFileUpload(file);
@@ -52,7 +54,7 @@ export default function Profile() {
     try {
       dispatch(updateUserStart());
       // console.log(formData);
-      const res = await axios.post(`/api/user/update/${currentUser._id}`, formData, {
+      const res = await axios.post(buri+`/user/update/${currentUser._id}`, formData, {
         headers: {
           'Content-Type': 'application/json',
         },
@@ -102,7 +104,7 @@ export default function Profile() {
     try {
       dispatch(deleteUserStart());
       console.log(currentUser._id);
-      const res = await axios.delete(`/api/user/delete/${currentUser._id}`);
+      const res = await axios.delete(buri+`/user/delete/${currentUser._id}`);
       const data = await res.data;
 
       if (data.success === false) {
@@ -122,7 +124,7 @@ export default function Profile() {
   const handleSignOut = async () => {
     try {
       dispatch(signoutUserStart())
-      const res = await axios.get(`/api/auth/signout`);
+      const res = await axios.get(buri+`/auth/signout`);
       const data = await res.data;
       if (data.success === false) {
         dispatch(signoutUserFailure(data.message))
@@ -139,7 +141,7 @@ export default function Profile() {
   const handleShowListings = async () => {
     try {
       setshowListingError(false);
-      const res = await fetch(`/api/user/listings/${currentUser._id}`);
+      const res = await fetch(buri+`/user/listings/${currentUser._id}`);
       const data = await res.json();
       console.log(data);
       if (data.success === false) {
@@ -155,7 +157,7 @@ export default function Profile() {
 
   const handleListingDelete = async (listingId) => {
     try {
-      const res = await axios.delete(`/api/listing/delete/${listingId}`);
+      const res = await axios.delete(buri+`/listing/delete/${listingId}`);
       const data = await res.data;
       if (data.success === false) {
         console.log(data.message);

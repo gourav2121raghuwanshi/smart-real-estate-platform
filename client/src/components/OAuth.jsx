@@ -6,6 +6,9 @@ import { useNavigate } from 'react-router-dom';
 
 export default function OAuth() {
   const dispatch = useDispatch();
+  
+  const buri="https://reat-estate-mern-backend.vercel.app"
+ 
   const navigate = useNavigate();
   const handleGoogleClick = async () => {
     try {
@@ -13,7 +16,7 @@ export default function OAuth() {
       const auth = getAuth(app);
       const result = await signInWithPopup(auth, provider);
 
-      const res = await fetch('/api/auth/google', {
+      const res = await fetch(buri+'/auth/google', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

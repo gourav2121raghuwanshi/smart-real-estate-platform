@@ -14,6 +14,8 @@ const CreateListing = () => {
     const { currentUser } = useSelector((state) => state.user);
     const [files, setFiles] = useState([]);
     const navigate = useNavigate();
+    const buri="https://reat-estate-mern-backend.vercel.app"
+ 
     const [formData, setFormData] = useState({
         name: "",
         description: "",
@@ -137,7 +139,7 @@ const CreateListing = () => {
             // console.log(currentUser._id);
             setLoading(true);
             setError(false);
-            const res = await axios.post("/api/listing/create", {
+            const res = await axios.post(buri+"/listing/create", {
                 ...formData,
                 userRef: currentUser._id,
             }, {

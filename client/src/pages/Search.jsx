@@ -16,7 +16,8 @@ const Search = () => {
     });
     const [loading, setLoading] = useState(false);
     const [listings, setListings] = useState([]);
-
+    const buri="https://reat-estate-mern-backend.vercel.app"
+ 
     const [showMore, setShowMore] = useState(false);
     // console.log("listings are : ", listings);
     // console.log(sideBardata)
@@ -71,7 +72,7 @@ const Search = () => {
                 setLoading(true);
                 setShowMore(false);
                 const searchQuery = urlParams.toString();
-                const res = await axios.get(`/api/listing/get?${searchQuery}`);
+                const res = await axios.get(buri+`/listing/get?${searchQuery}`);
                 const data = await res.data;
                 if (data.success === false) {
                     setLoading(false);
@@ -103,7 +104,7 @@ const Search = () => {
         urlParams.set('startIndex', startIndex);
         const searchQuery = urlParams.toString();
 
-        const res = await axios.get(`/api/listing/get?${searchQuery}`);
+        const res = await axios.get(buri+`/listing/get?${searchQuery}`);
         const data = await res.data;
         if (data.length < 9) {
             setShowMore(false);
