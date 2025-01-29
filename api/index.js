@@ -19,23 +19,19 @@ dbConnect();
 const app = express();
 app.use(express.json())
 app.use(cookieParser());
-app.use(cors());
-// app.use(
-//   cors({
-//       origin: "https://reat-estate-mern.vercel.app",
-//       methods: "GET,POST,PUT,DELETE",
-//       credentials: true,
-//   })
-// );
+// app.use(cors('*'));
+app.use(
+	cors({
+		origin: "https://reat-estate-mern.vercel.app",
+		credentials: true,
+	})
+)
 
 
 app.listen(process.env.PORT, () => {
   console.log(`server is running on port ${process.env.PORT}`);
 })
 
-app.get('/', (req, res) => {
-  res.send('Welcome to Backend');
-});
 
 
 
@@ -46,6 +42,10 @@ app.use('/api/listing', listingRouter);
 app.use('/api/rateus', reviewRatingRouter);
 
 
+
+app.get('/', (req, res) => {
+  res.send('Welcome to Backend');
+});
 
 
 // app.use(express.static(path.join(__dirname, '/client/dist')));

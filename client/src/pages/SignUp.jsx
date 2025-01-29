@@ -14,7 +14,7 @@ const SignUp = () => {
     email: '',
     password: '',
   });
-  const buri="https://reat-estate-mern-backend.vercel.app"
+  const buri="https://reat-estate-mern-backend.vercel.app/api"
  
   const [errorr, setError] = useState(null);
   const [loadingg, setLoading] = useState(false);

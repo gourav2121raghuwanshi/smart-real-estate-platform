@@ -41,7 +41,7 @@ export default function Profile() {
     setFormData({ ...formData, [e.target.id]: e.target.value });
   };
 
-  const buri="https://reat-estate-mern-backend.vercel.app"
+  const buri="https://reat-estate-mern-backend.vercel.app/api"
  
   useEffect(() => {
     if (file) {

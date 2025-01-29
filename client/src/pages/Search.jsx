@@ -16,7 +16,7 @@ const Search = () => {
     });
     const [loading, setLoading] = useState(false);
     const [listings, setListings] = useState([]);
-    const buri="https://reat-estate-mern-backend.vercel.app"
+    const buri="https://reat-estate-mern-backend.vercel.app/api"
  
     const [showMore, setShowMore] = useState(false);
     // console.log("listings are : ", listings);

@@ -9,7 +9,7 @@ const Contact = ({ listing }) => {
   const [message, setMessage] = useState("");
   //   const { currentUser } = useSelector((state) => state.user);
 
-  const buri="https://reat-estate-mern-backend.vercel.app"
+  const buri="https://reat-estate-mern-backend.vercel.app/api"
   const onChange = (e) => {
     setMessage(e.target.value);
   };

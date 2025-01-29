@@ -12,7 +12,7 @@ const Signin = () => {
     email: '',
     password: '',
   });
-  const buri="https://reat-estate-mern-backend.vercel.app"
+  const buri="https://reat-estate-mern-backend.vercel.app/api"
  
   const { loading, error } = useSelector((state) => state.user);
   const navigate = useNavigate();

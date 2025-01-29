@@ -9,7 +9,7 @@ const ReviewPage = () => {
     const [formData, setFormData] = useState({ rating: 0, review: "" });
     const { currentUser } = useSelector(state => state.user);
     const navigate = useNavigate();
-    const buri="https://reat-estate-mern-backend.vercel.app"
+    const buri="https://reat-estate-mern-backend.vercel.app/api"
  
     useEffect(() => {
         const getReview = async () => {

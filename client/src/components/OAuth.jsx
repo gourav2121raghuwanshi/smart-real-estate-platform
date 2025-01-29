@@ -7,8 +7,7 @@ import { useNavigate } from 'react-router-dom';
 export default function OAuth() {
   const dispatch = useDispatch();
   
-  const buri="https://reat-estate-mern-backend.vercel.app"
- 
+  const buri="https://reat-estate-mern-backend.vercel.app/api"
   const navigate = useNavigate();
   const handleGoogleClick = async () => {
     try {
