@@ -1,7 +1,7 @@
 const express = require('express')
-const mongoose = require('mongoose')
+// const mongoose = require('mongoose')
 const cookieParser = require('cookie-parser');
-const path = require('path');
+// const path = require('path');
 const userroute = require('./routes/userRoute.js')
 const authRouter = require('./routes/authRoute.js');
 const listingRouter = require('./routes/listingRouter.js');
@@ -13,7 +13,7 @@ require('dotenv').config();
 // const axios = require("axios");
 dbConnect();
 
-__dirname = path.resolve();
+// __dirname = path.resolve();
 
 const app = express();
 app.use(express.json())
@@ -28,11 +28,11 @@ app.use('/api/auth', authRouter);
 app.use('/api/listing', listingRouter);
 app.use('/api/rateus', reviewRatingRouter);
 
-app.use(express.static(path.join(__dirname, '/client/dist')));
+// app.use(express.static(path.join(__dirname, '/client/dist')));
 
-app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, 'client', 'dist', 'index.html'));
-})
+// app.get('*', (req, res) => {
+//   res.sendFile(path.join(__dirname, 'client', 'dist', 'index.html'));
+// })
 
 app.use((err, req, res, next) => {
   const statusCode = err.statusCode || 500;
