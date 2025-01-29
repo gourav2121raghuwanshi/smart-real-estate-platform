@@ -1,4 +1,5 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import React, { useEffect } from 'react';
 import Home from './pages/Home';
 import Signin from './pages/Signin';
 import SignUp from './pages/SignUp';
@@ -12,6 +13,14 @@ import Listing from './pages/Listing';
 import Search from './pages/Search';
 import ReviewPage from './pages/ReviewPage';
 export default function App() {
+  useEffect(() => {
+    const accessToken = document.cookie.split('; ').find(row => row.startsWith('access_token='));
+
+    // If the token is undefined, remove the cookie
+    if (!accessToken || accessToken.split('=')[1] === 'undefined') {
+      document.cookie = 'access_token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC;';
+    }
+  }, []);
   return (
     <BrowserRouter>
     <Header />
