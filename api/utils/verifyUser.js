@@ -5,6 +5,9 @@ exports.verifyToken = async (req, res, next) => {
     const token = req.cookies.access_token;
    
     if (!token) {
+        
+        res.clearCookie('access_token', { path: '/' });
+          
         return next(errorHandler(401, "Unauthorized: Token is empty or incorrect"));
     }
 
