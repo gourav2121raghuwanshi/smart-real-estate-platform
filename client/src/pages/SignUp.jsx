@@ -54,7 +54,7 @@ const SignUp = () => {
   
       setLoading(false);
       setError(null)
-      dispatch(signUpSuccess(data.rest));
+      dispatch(signUpSuccess(data));
       // navigate('/sign-in')
       navigate('/')
       // console.log(data);

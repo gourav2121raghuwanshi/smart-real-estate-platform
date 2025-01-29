@@ -36,14 +36,19 @@ export default function Profile() {
   const dispatch = useDispatch();
   const [showListingError, setshowListingError] = useState(false);
   const [userListings, setUserListings] = useState([]);
-  const navigate=useNavigate();
+  const navigate = useNavigate();
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.id]: e.target.value });
   };
 
   const buri="https://reat-estate-mern-backend.vercel.app/api"
-  //  const buri="http://localhost:3000/api"
- 
+  // const buri = "http://localhost:3000/api"
+
+  // if (currentUser) {
+  //   console.log("curentUser")
+  //   console.log(JSON.stringify(currentUser, null, 2));
+  // }
+
   useEffect(() => {
     if (file) {
       handleFileUpload(file);
@@ -53,13 +58,21 @@ export default function Profile() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
+
+      // setFormData((prevData) => ({
+      //   ...prevData,
+      //   token: currentUser.token, // Add token to formData
+      // }));
+      // console.log("formData is "+formData.password);
+
       dispatch(updateUserStart());
       // console.log(formData);
-      const res = await axios.post(buri+`/user/update/${currentUser._id}`, formData, {
+      const res = await axios.post(buri + `/user/update/${currentUser._id}`, formData, {
         headers: {
           'Content-Type': 'application/json',
+          'Authorization': `Bearer ${currentUser.token}`, // Send the token in Authorization header
         },
-        withCredentials:true
+        withCredentials: true
       });
       console.log(res);
       const data = await res.data;
@@ -69,7 +82,12 @@ export default function Profile() {
         return;
       }
 
-      dispatch(updateUserSuccess(data));
+      const tkn = currentUser.token;
+      // console.log("inside profile section : ")
+      // console.log(data); // Check the structure of data
+      // console.log(tkn); // Check the token value
+
+      dispatch(updateUserSuccess({ ...data, token: tkn }));
       setUpdateSuccess(true);
     } catch (error) {
       // console.log(error);
@@ -106,8 +124,12 @@ export default function Profile() {
     try {
       dispatch(deleteUserStart());
       console.log(currentUser._id);
-      const res = await axios.delete(buri+`/user/delete/${currentUser._id}`,{
-        withCredentials:true
+      const res = await axios.delete(buri + `/user/delete/${currentUser._id}`, {
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${currentUser.token}`, // Send the token in Authorization header
+        },
+        withCredentials: true
       });
       const data = await res.data;
 
@@ -128,8 +150,12 @@ export default function Profile() {
   const handleSignOut = async () => {
     try {
       dispatch(signoutUserStart())
-      const res = await axios.get(buri+`/auth/signout`,{
-        withCredentials:true
+      const res = await axios.get(buri + `/auth/signout`, {
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${currentUser.token}`, // Send the token in Authorization header
+        },
+        withCredentials: true
       });
       const data = await res.data;
       if (data.success === false) {
@@ -146,13 +172,16 @@ export default function Profile() {
 
   const handleShowListings = async () => {
     try {
-      setshowListingError(false);const res = await fetch(`${buri}/user/listings/${currentUser._id}`, {
-        method: 'GET',  
-        credentials: 'include', 
+      // console.log("token " + currentUser.token);
+      // console.log("token " + currentUser);
+      setshowListingError(false); const res = await fetch(`${buri}/user/listings/${currentUser._id}`, {
+        method: 'GET',
+        credentials: 'include',
         headers: {
-            'Content-Type': 'application/json'  
-        }
-    });
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${currentUser.token}`, // Send the token in Authorization header
+        },
+      });
       const data = await res.json();
       console.log(data);
       if (data.success === false) {
@@ -160,7 +189,7 @@ export default function Profile() {
         return;
       }
       setUserListings(data);
-      
+
     } catch (err) {
       setshowListingError(true);
     }
@@ -168,8 +197,12 @@ export default function Profile() {
 
   const handleListingDelete = async (listingId) => {
     try {
-      const res = await axios.delete(buri+`/listing/delete/${listingId}`,{
-        withCredentials:true
+      const res = await axios.delete(buri + `/listing/delete/${listingId}`, {
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${currentUser.token}`, // Send the token in Authorization header
+        },
+        withCredentials: true
       });
       const data = await res.data;
       if (data.success === false) {
@@ -271,7 +304,7 @@ export default function Profile() {
             <div key={listing._id} className='flex sm:flex-row  gap-2 md:gap-4  border rounded-lg  justify-between items-center sm:p-2 md:p-4 p-1'>
               <Link to={`/listing/${listing._id}`} >
                 <img
-                loading='lazy'
+                  loading='lazy'
                   src={listing.imageUrls[0]}
                   alt="listing img"
                   className='sm:h-36 sm:w-36 h-20 w-20 md:h-60 md:w-60 object-contain rounded-lg'
@@ -285,10 +318,10 @@ export default function Profile() {
               </Link>
               <div className='flex flex-col gap-1 sm:gap-2 items-center md:gap-3'>
                 <button onClick={() => handleListingDelete(listing._id)} className='text-red-700 uppercase text-lg sm:text-xl md:text-2xl font-semibold'>Delete </button>
-                <Link to={`/update-listing/${listing._id}`} >     
-                 <button className='text-blue-700 uppercase text-lg sm:text-xl md:text-2xl font-semibold'>Edit </button>
-                </Link> 
-                 </div>
+                <Link to={`/update-listing/${listing._id}`} >
+                  <button className='text-blue-700 uppercase text-lg sm:text-xl md:text-2xl font-semibold'>Edit </button>
+                </Link>
+              </div>
             </div>
           ))}
         </div>

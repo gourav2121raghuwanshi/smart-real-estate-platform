@@ -30,7 +30,8 @@ export default function OAuth() {
         }),
       });
       const data = await res.json();
-      //console.log(data);
+      // console.log(data);
+      // console.log(data.token);
       // document.cookie = `access_token=${data.token}; path=/`;
       dispatch(signInSuccess(data));
       navigate('/');

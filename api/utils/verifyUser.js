@@ -2,12 +2,12 @@ const { errorHandler } = require("./error.js");
 const jwt = require('jsonwebtoken');
 
 exports.verifyToken = async (req, res, next) => {
-    const token = req.cookies.access_token;
-   
+    // const token = req.cookies.access_token ;
+    const token = req.headers.authorization && req.headers.authorization.split(' ')[1]; // "Bearer <token>"
+    
+    // console.log("token uri user"+token);
     if (!token) {
-        
-        res.clearCookie('access_token', { path: '/' });
-          
+        console.log("no token given")
         return next(errorHandler(401, "Unauthorized: Token is empty or incorrect"));
     }
    

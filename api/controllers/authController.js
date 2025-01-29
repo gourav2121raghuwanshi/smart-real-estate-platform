@@ -31,7 +31,7 @@ exports.signup = async (req, res, next) => {
             httpOnly: true,
         };
 
-        res.cookie("access_token", token, options).status(200).json({rest,token});
+        res.cookie("access_token", token, options).status(200).json({...rest, token});
         // res.status(201).json("User Created Successfully ");
     } catch (err) {
         console.log(`error in signup ${err.message}`);
@@ -74,7 +74,7 @@ exports.signin = async (req, res, next) => {
             httpOnly: true,
         };
 
-        res.cookie("access_token", token, options).status(200).json({rest,token});
+        res.cookie("access_token", token, options).status(200).json({...rest, token});
         
     } catch (err) {
         console.error(`Error in signin: ${err.message}`);
@@ -84,6 +84,7 @@ exports.signin = async (req, res, next) => {
 
 exports.google = async (req, res, next) => {
     try {
+        console.log("inside o Auth")
         const user = await User.findOne({ email: req.body.email });
         if (user) {
             const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET);
@@ -91,7 +92,7 @@ exports.google = async (req, res, next) => {
             const { password: pass, ...rest } = user._doc;
             res.
                 cookie('access_token', token, { httpOnly: true })
-                .status(200).json(rest);
+                .status(200).json({...rest, token});
         } else {
             const generatePassword = Math.random().toString(36).slice(-8);
             const hashedPassword = await bcrypt.hash(generatePassword, 10);
@@ -101,7 +102,7 @@ exports.google = async (req, res, next) => {
 
             res.
                 cookie('access_token', token, { httpOnly: true })
-                .status(200).json({rest,token});
+                .status(200).json({...rest, token});
 
         }
     } catch (err) {

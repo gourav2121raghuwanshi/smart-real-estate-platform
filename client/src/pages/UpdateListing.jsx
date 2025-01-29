@@ -147,6 +147,7 @@ const UpdateListing = () => {
       }, {
         headers: {
           'Content-Type': 'application/json',
+          'Authorization': `Bearer ${currentUser.token}`, // Send the token in Authorization header
         },
         withCredentials:true
       });

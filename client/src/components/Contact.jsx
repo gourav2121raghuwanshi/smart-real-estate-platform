@@ -3,12 +3,13 @@ import axios from "axios";
 import { useState } from "react";
 // import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
+import { useDispatch } from 'react-redux';
 import { useEffect } from "react";
 const Contact = ({ listing }) => {
   const [landlord, setLandlord] = useState(null);
   const [message, setMessage] = useState("");
   //   const { currentUser } = useSelector((state) => state.user);
-
+  const { currentUser} = useSelector((state) => state.user);
   // const buri="http://localhost:3000/api"
   const buri="https://reat-estate-mern-backend.vercel.app/api"
   const onChange = (e) => {
@@ -18,9 +19,14 @@ const Contact = ({ listing }) => {
   useEffect(() => {
     const getLandlord = async () => {
       try {
-        const res = await axios.get(buri+`/user/${listing.userRef}`,{
-          withCredentials: true
-        });
+        const res = await axios.get(buri+`/user/${listing.userRef}`,
+          {
+            headers: {
+              'Content-Type': 'application/json', // Specifies the content type
+              'Authorization': `Bearer ${currentUser.token}`, // Sending the token in the Authorization header
+            },
+            withCredentials: true, // Ensures cookies (if any) are included in cross-origin requests
+          });
         const data = await res.data;
         if (data.success === false) {
           console.log(data.message);

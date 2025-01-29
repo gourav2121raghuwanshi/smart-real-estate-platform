@@ -28,7 +28,9 @@ const Signin = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
+     // console.log("in sing in")
       dispatch(signInStart());
+
       const res = await axios.post(buri+'/auth/signin', formdata, {
         headers: {
           'Content-Type': 'application/json',
@@ -47,7 +49,7 @@ const Signin = () => {
       // document.cookie = `access_token=${data.token}; path=/`;
       
       //console.log("user is : ",data)
-      dispatch(signInSuccess(data.rest));
+      dispatch(signInSuccess(data));
       navigate('/')
 
     } catch (error) {
