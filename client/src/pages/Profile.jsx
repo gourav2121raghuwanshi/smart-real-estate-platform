@@ -136,7 +136,6 @@ export default function Profile() {
         dispatch(signoutUserFailure(data.message))
         return;
       }
-      document.cookie = 'access_token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT;';
       dispatch(signoutUserSuccess(data))
     }
     catch (err) {

@@ -44,7 +44,7 @@ const Signin = () => {
         return;
       }
       console.log(data.token);
-      document.cookie = `access_token=${data.token}; path=/`;
+      // document.cookie = `access_token=${data.token}; path=/`;
       
       //console.log("user is : ",data)
       dispatch(signInSuccess(data.rest));
