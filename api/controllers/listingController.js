@@ -2,6 +2,10 @@ const errorHandler = require('../utils/error.js')
 const Listing = require('../models/listingModel.js')
 const axios = require('axios');
 const pricePredictorModelUrl_rent_sale = 'https://house-price-prediction-model-g4ex.onrender.com';
+
+// const pricePredictorModelUrl_rent_sale = "http://127.0.0.1:5000"
+
+
 /*sale
 #  {
 {
