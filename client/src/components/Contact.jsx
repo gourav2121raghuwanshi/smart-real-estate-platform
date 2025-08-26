@@ -11,8 +11,8 @@ const Contact = ({ listing }) => {
   const [message, setMessage] = useState("");
   //   const { currentUser } = useSelector((state) => state.user);
   const { currentUser} = useSelector((state) => state.user);
-  // const buri="http://localhost:3000/api"
-  const buri="https://reat-estate-mern-backend.vercel.app/api"
+  const buri=import.meta.env.VITE_BACKEND_URI;
+
   const onChange = (e) => {
     setMessage(e.target.value);
   };

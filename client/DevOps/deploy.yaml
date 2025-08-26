@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: findyourhome-client-deployment
+  labels:
+    app: findyourhome-client
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: findyourhome-client
+  template:
+    metadata:
+      labels: 
+        app: findyourhome-client
+    spec:
+      containers:
+        - name: findyourhome-client-containers
+          image: graghu1/findyourhome_client_image
+          ports:
+            - containerPort: 80
+          env:
+            - name: VITE_FIREBASE_API_KEY
+              value: "AIzaSyBRjnuHB7IumYIMoQRipa4179NfyP-sWgU"
+            - name: VITE_BACKEND_URI
+              value: "http://ad7d8bb0e94c24169a171c6793423285-723215287.us-east-1.elb.amazonaws.com:3000/api"
+              # value: "http://localhost:3000/api"

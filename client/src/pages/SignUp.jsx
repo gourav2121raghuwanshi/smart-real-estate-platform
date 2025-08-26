@@ -14,8 +14,8 @@ const SignUp = () => {
     email: '',
     password: '',
   });
-  const buri="https://reat-estate-mern-backend.vercel.app/api"
-  //  const buri="http://localhost:3000/api"
+
+   const buri=import.meta.env.VITE_BACKEND_URI
  
   const [errorr, setError] = useState(null);
   const [loadingg, setLoading] = useState(false);

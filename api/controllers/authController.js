@@ -5,7 +5,7 @@ const { errorHandler } = require('../utils/error.js');
 const jwt = require('jsonwebtoken');
 
 exports.signup = async (req, res, next) => {
-    console.log("in");
+    // console.log("in");
     try {
         const { username, email, password } = req.body;
 

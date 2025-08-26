@@ -1,0 +1,25 @@
+# dependencies
+node_modules
+npm-debug.log
+yarn-error.log
+pnpm-debug.log
+
+# build outputs
+build
+dist
+
+# local env files (only copy explicitly if needed)
+.env.local
+.env.development
+.env.test
+.env.production
+
+# editor & system files
+.DS_Store
+.vscode
+.idea
+*.swp
+
+# git
+.git
+.gitignore
