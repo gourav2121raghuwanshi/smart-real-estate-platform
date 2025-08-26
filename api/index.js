@@ -23,8 +23,7 @@ app.use(cookieParser());
 // app.use(cors('*'));
 app.use(
 	cors({
-    origin: "https://findyourhome.vercel.app",
-    // origin: "http://localhost:5173",
+    origin: process.env.CLIENT_ORIGIN,
 		credentials: true,
 	})
 )

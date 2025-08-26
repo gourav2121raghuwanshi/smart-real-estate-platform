@@ -14,8 +14,7 @@ const CreateListing = () => {
     const { currentUser } = useSelector((state) => state.user);
     const [files, setFiles] = useState([]);
     const navigate = useNavigate();
-    // const buri = "http://localhost:3000/api"
-    const buri="https://reat-estate-mern-backend.vercel.app/api"
+    const buri = import.meta.env.VITE_BACKEND_URI
 
     const [formData, setFormData] = useState({
         name: "",

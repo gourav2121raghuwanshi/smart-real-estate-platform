@@ -10,10 +10,11 @@ export default function Home() {
   const [offerListings, setOfferListings] = useState([]);
   const [saleListings, setSaleListings] = useState([]);
   const [rentListings, setRentListings] = useState([]);
-  const buri="https://reat-estate-mern-backend.vercel.app/api"
-  //  const buri="http://localhost:3000/api"
- 
+  
+   const buri=import.meta.env.VITE_BACKEND_URI
   SwiperCore.use([Navigation]);
+   console.log("backend uri is ", buri);
+   
   console.log(offerListings);
   useEffect(() => {
     const fetchOfferListings = async () => {

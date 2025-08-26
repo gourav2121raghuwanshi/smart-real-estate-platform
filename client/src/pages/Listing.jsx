@@ -26,8 +26,8 @@ const Listing = () => {
     const [error, setError] = useState(false);
     const [copied, setCopied] = useState(false);
     const [contact, setContact] = useState(false);
-    const buri="https://reat-estate-mern-backend.vercel.app/api"
-    //  const buri="http://localhost:3000/api"
+
+     const buri=import.meta.env.VITE_BACKEND_URI
  
     // console.log(listing.userRef);
     // console.log(currentUser._id)
