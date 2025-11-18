@@ -1,8 +1,9 @@
-const { errorHandler } = require("../utils/error.js");
-const bcrypt = require('bcrypt');
-const User = require('../models/userModel.js');
-const Listing = require('../models/listingModel.js')
-exports.updateUser = async (req, res, next) => {
+import { errorHandler } from "../utils/error.js";
+import bcrypt from "bcrypt";
+import User from "../models/userModel.js";
+import Listing from "../models/listingModel.js";
+
+export const updateUser = async (req, res, next) => {
     try {
         // Check if the logged-in user is updating their own account
         if (req.user.id !== req.params.id) {
@@ -51,7 +52,7 @@ exports.updateUser = async (req, res, next) => {
         next(err);
     }
 };
-// exports.updateUser = async (req, res, next) => {
+// export const updateUser = async (req, res, next) => {
 //     try {
 //         if (req.user.id !== req.params.id) return next(errorHandler(401, "You Can Only Update Your Own Account"));
 //         if (req.body.password) {
@@ -100,7 +101,7 @@ exports.updateUser = async (req, res, next) => {
 //     }
 // };
 
-exports.deleteUser = async (req, res, next) => {
+export const deleteUser = async (req, res, next) => {
     try {
         console.log(req.user.id)
         console.log(req.params.id)
@@ -118,7 +119,7 @@ exports.deleteUser = async (req, res, next) => {
     }
 };
 
-exports.getUserListing = async (req, res, next) => {
+export const getUserListing = async (req, res, next) => {
     try {
         if (req.user.id === req.params.id) {
             const listings = await Listing.find({ userRef: req.params.id });
@@ -133,7 +134,7 @@ exports.getUserListing = async (req, res, next) => {
     }
 }
 
-exports.getUser = async (req, res, next) => {
+export const getUser = async (req, res, next) => {
     try {
         const user = await User.findById(req.params.id);
         if (!user) {

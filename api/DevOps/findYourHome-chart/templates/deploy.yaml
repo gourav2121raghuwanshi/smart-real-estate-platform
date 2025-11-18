@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.name | default "findyourhome-api"  }}-deploy
+  # name: findyourhome-api-deploy
+  labels:
+    app: findyourhome-api
+spec:
+  replicas: {{ .Values.replica_count }}
+  # replicas: 3
+  selector:
+    matchLabels:
+      app: findyourhome-api
+  template:
+    metadata:
+      labels: 
+        app: findyourhome-api
+    spec:
+      containers:
+        - name: {{ .Chart.Name | lower}}
+        # - name: findyourhome-api-containers
+          image: {{ .Values.image }}
+          # image: graghu1/findyourhome_api_image
+          ports:
+            - containerPort: {{ .Values.containerPort }}
+            # - containerPort: 3000
+          env:
+              {{- range $key, $value := .Values.env }}
+              - name: {{ $key }}
+                value: {{ $value | quote }}
+              {{- end }}
+          # env:
+          #   - name: PORT
+          #     value: "3000"
+          #   - name: JWT_SECRET
+          #     value: "abvd23232s"
+          #   - name: DBURL
+          #     value: "mongodb+srv://gourav:gourav@realestatemern.vsen5up.mongodb.net/RealEstate-MERN?retryWrites=true&w=majority"
+          #   - name: CLIENT_ORIGIN
+          #     value: "http://localhost:5173"
+          #     # value: "http://a5841a4ab14ed486e964d02de8d93bfd-1835817881.us-east-1.elb.amazonaws.com/"
+          #   - name: ML_MODEL_URI
+          #     value: "https://house-price-prediction-model-g4ex.onrender.com"

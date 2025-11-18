@@ -1,0 +1,17 @@
+replica_count: 2
+image: graghu1/findyourhome_api_image
+containerPort: 3000
+
+
+service:
+  type: NodePort
+  port: 3000
+  targetPort: 3000
+
+
+env:
+  PORT: "3000"
+  JWT_SECRET: "abvd23232s"
+  DBURL: "mongodb+srv://gourav:gourav@realestatemern.vsen5up.mongodb.net/RealEstate-MERN?retryWrites=true&w=majority"
+  CLIENT_ORIGIN: "http://localhost:5173"
+  ML_MODEL_URI: "https://house-price-prediction-model-g4ex.onrender.com"

@@ -1,16 +1,26 @@
-const express = require('express')
-// const mongoose = require('mongoose')
-const cookieParser = require('cookie-parser');
-// const path = require('path');
-const userroute = require('./routes/userRoute.js')
-const authRouter = require('./routes/authRoute.js');
-const listingRouter = require('./routes/listingRouter.js');
-const reviewRatingRouter=require("./routes/reviewRatingRoute.js")
-const dbConnect=require('./utils/databaseConnect.js')
-const cors = require('cors');
-require('dotenv').config();
-// const Listing = require("./models/listingModel.js");
-// const axios = require("axios");
+import express from 'express';
+// import mongoose from 'mongoose';
+import cookieParser from 'cookie-parser';
+// import path from 'path';
+import userroute from './routes/userRoute.js';
+import authRouter from './routes/authRoute.js';
+import listingRouter from './routes/listingRouter.js';
+import reviewRatingRouter from './routes/reviewRatingRoute.js';
+import dbConnect from './utils/databaseConnect.js';
+import cors from 'cors';
+import dotenv from 'dotenv';
+import client from 'prom-client'
+import responseTime from 'response-time';
+// import { pipeline } from "@xenova/transformers";
+// import Listing from './models/listingModel.js';
+// import { GoogleGenerativeAI } from "@google/generative-ai";
+// const genAI = new GoogleGenerativeAI(process.env.GOOGLE_API_KEY);
+// const model = genAI.getGenerativeModel({ model: "text-embedding-004"});
+
+// import axios from 'axios';
+
+dotenv.config();
+
 dbConnect();
 
 // __dirname = path.resolve();
@@ -45,13 +55,17 @@ app.use('/api/rateus', reviewRatingRouter);
 app.get('/', (req, res) => {
   res.send('Welcome to Backend');
 });
+// const extractor = await pipeline(
+//   "feature-extraction",
+//   "Xenova/all-MiniLM-L6-v2"
+// );
+// const response = await extractor(
+//   ["A robot may not injure a human being or, through inaction, allow a human being to come to harm."],
+//   { pooling: "mean", normalize: true }
+// );
 
+// console.log(Array.from(response.data));
 
-// app.use(express.static(path.join(__dirname, '/client/dist')));
-
-// app.get('*', (req, res) => {
-//   res.sendFile(path.join(__dirname, 'client', 'dist', 'index.html'));
-// })
 
 app.use((err, req, res, next) => {
   const statusCode = err.statusCode || 500;
@@ -64,7 +78,40 @@ app.use((err, req, res, next) => {
 });
 
 
+const collectDefaultMetrics = client.collectDefaultMetrics;
+collectDefaultMetrics({ register: client.register });
 
+app.get("/metrics", async (req, res) => {
+    try {
+        res.setHeader("Content-Type", client.register.contentType);
+        const metrics = await client.register.metrics();
+        res.send(metrics);
+    } catch (error) {
+        logger.error("Metrics collection failed: " + error.message);
+        res.status(500).json({ status: "Error", error: "Metrics collection failed" });
+    }
+});
+
+
+const reqResTime = new client.Histogram({
+    name: "http_express_req_res_time",
+    help: "Time taken by request and response",
+    labelNames: ["method", "route", "status_code"],
+    buckets: [10, 50, 100, 200, 400, 500, 800, 1000, 2000,3000], // milliseconds
+});
+
+// Total request counter
+const totalReqCounter = new client.Counter({
+    name: "total_requests",
+    help: "Total number of requests received",
+});
+
+app.use(
+    responseTime((req, res, time) => {
+        totalReqCounter.inc();
+        reqResTime.labels(req.method, req.url, res.statusCode.toString()).observe(time);
+    })
+);
 
 // const Listing=require("./models/listingModel.js")
 // const updateListings = async () => {
@@ -164,3 +211,48 @@ app.use((err, req, res, next) => {
 // // };
 
 // // updateListings();
+// const embeddingModel = genAI.getGenerativeModel({
+//   model: "text-embedding-004",
+// });
+
+// async function generateEmbedding(text) {
+//   const result = await embeddingModel.embedContent(text);
+//   return result.embedding.values; // returns array of floats
+// }
+// async function updateListings() {
+//   try {
+   
+//     // Find listings without embedding
+//     const listings = await Listing.find({ embedding: { $exists: false } });
+
+//     for (const listing of listings) {
+//       try {
+//         const embedText = `
+//           ${listing.name || ""}
+//           ${listing.description || ""}
+//           ${listing.address || ""}
+//           ${listing.city || ""}
+//           ${listing.type} TYPE,
+//           ${listing.bhk} BHK,
+//           ₹${listing.discountPrice},
+//           Furnished: ${listing.furnished},
+//           Parking: ${listing.parking}
+//         `;
+
+//         const vector = await generateEmbedding(embedText);
+//         listing.embedding = vector;
+
+//         await listing.save();
+//         console.log(listing)
+//         console.log(`✅ Updated listing ${listing._id}`);
+//       } catch (err) {
+//         console.error(`❌ Failed to update ${listing._id}:`, err.message);
+//       }
+//     }
+//     console.log("Disconnected from MongoDB");
+//   } catch (err) {
+//     console.error("Error:", err.message);
+//   }
+// }
+
+// updateListings();

@@ -1,8 +1,8 @@
-const RatingAndReview = require('../models/RatingAndReview.js');
-// const User = require("../models/userModel.js");
-// const mongoose = require('mongoose')
+import RatingAndReview from '../models/RatingAndReview.js';
+// import User from '../models/userModel.js';
+// import mongoose from 'mongoose';
 
-exports.ratingAndReview = async (req, res) => {
+export const ratingAndReview = async (req, res) => {
     try {
         const { rating, review, user } = req.body;
 
@@ -26,7 +26,7 @@ exports.ratingAndReview = async (req, res) => {
     }
 };
 
-exports.getCurrentratingAndReview = async (req, res) => {
+export const getCurrentratingAndReview = async (req, res) => {
     try {
         const { id } = req.params;
         console.log(id);
@@ -52,7 +52,7 @@ exports.getCurrentratingAndReview = async (req, res) => {
 };
 
 
-exports.UpdateratingAndReview = async (req, res) => {
+export const UpdateratingAndReview = async (req, res) => {
     try {
         const { id } = req.params;
         const { rating, review } = req.body;
@@ -89,7 +89,7 @@ exports.UpdateratingAndReview = async (req, res) => {
 
 
 
-exports.getAllRatingAndReviews = async (req, res) => {
+export const getAllRatingAndReviews = async (req, res) => {
     try {
         const ratAndRev = await RatingAndReview.find({}).sort({ rating: "desc" })
             .populate("user");

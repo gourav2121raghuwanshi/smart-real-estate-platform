@@ -1,7 +1,7 @@
-const { errorHandler } = require("./error.js");
-const jwt = require('jsonwebtoken');
+import { errorHandler } from './error.js';
+import * as jwt from 'jsonwebtoken';
 
-exports.verifyToken = async (req, res, next) => {
+export const verifyToken = async (req, res, next) => {
     // const token = req.cookies.access_token ;
     const token = req.headers.authorization && req.headers.authorization.split(' ')[1]; // "Bearer <token>"
     

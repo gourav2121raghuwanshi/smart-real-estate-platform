@@ -1,5 +1,11 @@
-const {ratingAndReview,getAllRatingAndReviews,getCurrentratingAndReview,UpdateratingAndReview}=require("../controllers/RatingAndReviewController.js");
-const express = require('express');
+import express from 'express';
+import { 
+  ratingAndReview, 
+  getAllRatingAndReviews, 
+  getCurrentratingAndReview, 
+  UpdateratingAndReview 
+} from "../controllers/RatingAndReviewController.js";
+
 const router = express.Router();
 
 
@@ -8,5 +14,4 @@ router.get("/getReviews",getAllRatingAndReviews);
 router.get("/ReviewOfCurrentUser/:id",getCurrentratingAndReview);
 router.post("/updateReview/:id",UpdateratingAndReview);
 
-
-module.exports = router;
+export default router;

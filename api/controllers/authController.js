@@ -1,10 +1,10 @@
-const User = require('../models/userModel.js')
-const bcrypt = require('bcrypt');
-require('dotenv').config();
-const { errorHandler } = require('../utils/error.js');
-const jwt = require('jsonwebtoken');
+import User from '../models/userModel.js';
+import bcrypt from 'bcrypt';
+import dotenv from 'dotenv';
+import { errorHandler } from '../utils/error.js';
+import * as jwt from 'jsonwebtoken';
 
-exports.signup = async (req, res, next) => {
+export const signup = async (req, res, next) => {
     // console.log("in");
     try {
         const { username, email, password } = req.body;
@@ -39,7 +39,7 @@ exports.signup = async (req, res, next) => {
     }
 };
 
-exports.signin = async (req, res, next) => {
+export const signin = async (req, res, next) => {
     try {
         const { email, password } = req.body;
 
@@ -82,7 +82,7 @@ exports.signin = async (req, res, next) => {
     }
 };
 
-exports.google = async (req, res, next) => {
+export const google = async (req, res, next) => {
     try {
         console.log("inside o Auth")
         const user = await User.findOne({ email: req.body.email });
@@ -110,7 +110,7 @@ exports.google = async (req, res, next) => {
     }
 }
 
-exports.signout = async (req, res, next) => {
+export const signout = async (req, res, next) => {
     try {
         res.clearCookie('access_token');
         res.status(200).json('user has been logged out !');
