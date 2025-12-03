@@ -79,5 +79,8 @@ const listingSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
+listingSchema.index({ name: 'text', address:'text', city:'text' });
+listingSchema.index({ type:1, parking:1, furnished:1, regularPrice:1 });
+listingSchema.index({ city:1,type: 1, regularPrice:1 }); 
 const Listing = mongoose.model("Listing", listingSchema);
 export default Listing;
