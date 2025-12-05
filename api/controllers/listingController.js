@@ -5,7 +5,8 @@ import axios from "axios";
 import dotenv from "dotenv";
 dotenv.config();
 const genAI = new GoogleGenerativeAI(process.env.GOOGLE_API_KEY);
-const gemini = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+// const gemini = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+const gemini = genAI.getGenerativeModel({ model: "gemini-2.5-flash-lite" });
 const embeddingModel = genAI.getGenerativeModel({
   model: "text-embedding-004",
 });
@@ -19,32 +20,13 @@ async function generateEmbedding(text) {
   const result = await embeddingModel.embedContent(text);
   return result.embedding.values; // returns array of floats
 }
-function cosineSimilarity(vecA, vecB) {
-  const dot = vecA.reduce((sum, a, i) => sum + a * vecB[i], 0);
-  const normA = Math.sqrt(vecA.reduce((sum, a) => sum + a * a, 0));
-  const normB = Math.sqrt(vecB.reduce((sum, b) => sum + b * b, 0));
-  return dot / (normA * normB);
-}
+// function cosineSimilarity(vecA, vecB) {
+//   const dot = vecA.reduce((sum, a, i) => sum + a * vecB[i], 0);
+//   const normA = Math.sqrt(vecA.reduce((sum, a) => sum + a * a, 0));
+//   const normB = Math.sqrt(vecB.reduce((sum, b) => sum + b * b, 0));
+//   return dot / (normA * normB);
+// }
 
-/*sale
-#  {
-{
- "area": 1500,
-"bedRoom": 3,
-"bathroom": 2,
-"address": "Karol bagh",
- "furnishDetails": 1,
- "city":"Delhi"
-}
-# }
-rent
-"Address": "4BHK , Super Luxury Villa ,Juhu , Mumbai",
-"bhk": 4,
-"BathRoom": 3,
-"Furnished": 1,
-"city": "Mumbai"
-
-*/
 export const createListing = async (req, res, next) => {
   try {
     // console.log("inside listing ", req.body);
@@ -151,44 +133,45 @@ export const searchQuery = async (req, res, next) => {
     const queryEmbedding = await generateEmbedding(query);
 
     // 2. Fetch listings
-    const listings = await Listing.find({ embedding: { $exists: true } });
 
-    //      const listings = await Listing.aggregate([
-    //   {
-    //     $vectorSearch: {
-    //       queryVector: queryEmbedding,
-    //       path: "embedding",
-    //       numCandidates: 50,
-    //       limit: 5,
-    //     },
-    //   },
-    // ]);
+    //  now since we are using the listing_vector_index,
+    //  hence mongoDB itself calculates the cosine similarity and returns the topK listings(based on similarity)
 
-    // 3. Compute similarity scores
-    const scored = listings.map((l) => ({
-      listing: l,
-      score: cosineSimilarity(queryEmbedding, l.embedding),
-    }));
+    const listings = await Listing.aggregate([
+      {
+        $vectorSearch: {
+          index: "listing_vector_index",
+          path: "embedding",
+          queryVector: queryEmbedding,
+          numCandidates: 50,
+          limit: 10,
+        },
+      },
+      {
+        $project: {
+          embedding: 0, //  exclude embedding to save bandwidth + memory
+          description: 0,
+        },
+      },
+    ]);
 
-    // 4. Sort & take top-k (say k=5)
-    const topK = scored.sort((a, b) => b.score - a.score).slice(0, 5);
+    // step 3 and 4 are now being performed by mongoDB atlas vector search
 
     // 5. Build context string
-    const context = topK
+    const context = listings
       .map(
         (t) => `
-      mongo_id: ${t.listing._id}
-      Name: ${t.listing.name}
-      Address: ${t.listing.address}
-      City: ${t.listing.city}
-      Type: ${t.listing.type}
-      Price: ${t.listing.discountPrice}
-      Bedroom: ${t.listing.bhk}
-      Bathroom: ${t.listing.bathroom}
-      Area: ${t.listing.area}
-      Furnished: ${t.listing.furnished}
-      Parking: ${t.listing.parking}
-      Description: ${t.listing.description}
+      mongo_id: ${t._id}
+      Name: ${t.name}
+      Address: ${t.address}
+      City: ${t.city}
+      Type: ${t.type}
+      Price: ${t.discountPrice}
+      Bedroom: ${t.bhk}
+      Bathroom: ${t.bathroom}
+      Area: ${t.area}
+      Furnished: ${t.furnished}
+      Parking: ${t.parking}
     `
       )
       .join("\n\n");
