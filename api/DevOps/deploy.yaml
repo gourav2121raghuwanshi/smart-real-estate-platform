@@ -25,9 +25,9 @@ spec:
             - name: JWT_SECRET
               value: "abvd23232s"
             - name: DBURL
-              value: "mongodb+srv://gourav:gourav@realestatemern.vsen5up.mongodb.net/RealEstate-MERN?retryWrites=true&w=majority"
+              value: ""
             - name: CLIENT_ORIGIN
               value: "http://localhost:5173"
               # value: "http://a5841a4ab14ed486e964d02de8d93bfd-1835817881.us-east-1.elb.amazonaws.com/"
             - name: ML_MODEL_URI
-              value: "https://house-price-prediction-model-g4ex.onrender.com"
+              value: ""

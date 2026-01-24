@@ -12,6 +12,6 @@ service:
 env:
   PORT: "3000"
   JWT_SECRET: "abvd23232s"
-  DBURL: "mongodb+srv://gourav:gourav@realestatemern.vsen5up.mongodb.net/RealEstate-MERN?retryWrites=true&w=majority"
+  DBURL: ""
   CLIENT_ORIGIN: "http://localhost:5173"
   ML_MODEL_URI: "https://house-price-prediction-model-g4ex.onrender.com"
