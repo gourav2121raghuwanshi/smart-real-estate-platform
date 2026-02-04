@@ -3,6 +3,7 @@ import Listing from "../models/listingModel.js";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import axios from "axios";
 import dotenv from "dotenv";
+import logger from "../monitoring/logger.js";
 dotenv.config();
 const genAI = new GoogleGenerativeAI(process.env.GOOGLE_API_KEY);
 // const gemini = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
@@ -32,6 +33,11 @@ export const createListing = async (req, res, next) => {
     // console.log("inside listing ", req.body);
 
     let productData = req.body;
+    logger.info("Create listing request received", {
+      userId: req.user?.id,
+      type: req.body?.type,
+      city: req.body?.city,
+    });
 
     // Create a description string for embedding
     const embedText = `
@@ -71,7 +77,7 @@ export const createListing = async (req, res, next) => {
       // console.log(data_sale);
       const response = await axios.post(
         pricePredictorModelUrl_rent_sale + "/predict-sale",
-        data_sale
+        data_sale,
       );
       // console.log(response.data.predicted_price);
       productData = {
@@ -82,7 +88,7 @@ export const createListing = async (req, res, next) => {
       console.log(data_rent);
       const response = await axios.post(
         pricePredictorModelUrl_rent_sale + "/predict-rent",
-        data_rent
+        data_rent,
       );
       // console.log(response.data.predicted_price);
       productData = {
@@ -94,10 +100,20 @@ export const createListing = async (req, res, next) => {
 
     const listing = new Listing(productData);
     await listing.save();
+    logger.info("Listing created successfully", {
+      listingId: listing._id,
+      userId: req.user?.id,
+      type: listing.type,
+    });
     // const listing = await Listing.create(req.body);
     return res.status(201).json(listing);
   } catch (err) {
-    console.log(err);
+    // console.log(err);
+    logger.error("Failed to create listing", {
+      error: err.message,
+      stack: err.stack,
+      userId: req.user?.id,
+    });
     next(err);
   }
 };
@@ -107,17 +123,33 @@ export const deleteListing = async (req, res, next) => {
     const listing = await Listing.findById(req.params.id);
 
     if (!listing) {
+      logger.warn("Delete listing failed - not found", {
+        listingId: req.params.id,
+      });
       return next(errorHandler(404, "Listing Not Found"));
     }
 
     if (req.user.id !== listing.userRef) {
+      logger.warn("Unauthorized delete attempt", {
+        listingId: req.params.id,
+        userId: req.user.id,
+      });
       return next(errorHandler(401, "You can only delete Your own listing "));
     }
 
     await Listing.findByIdAndDelete(req.params.id);
+    logger.info("Listing deleted successfully", {
+      listingId: req.params.id,
+      userId: req.user.id,
+    });
     return res.status(201).json("Listing deleted SuccessFully");
   } catch (err) {
-    console.log(err);
+    // console.log(err);
+    logger.error("Failed to delete listing", {
+      error: err.message,
+      stack: err.stack,
+      listingId: req.params?.id,
+    });
     next(err);
   }
 };
@@ -127,8 +159,14 @@ export const searchQuery = async (req, res, next) => {
     const { query } = req.query;
 
     if (!query) {
+      logger.warn("Search query missing");
       return res.status(400).json({ error: "query param is required" });
     }
+
+    logger.info("Search query received", {
+      query,
+    });
+
     // 1. Embed user query
     const queryEmbedding = await generateEmbedding(query);
 
@@ -172,10 +210,10 @@ export const searchQuery = async (req, res, next) => {
       Area: ${t.area}
       Furnished: ${t.furnished}
       Parking: ${t.parking}
-    `
+    `,
       )
       .join("\n\n");
-    console.log("Context for LLM:", context);
+    // console.log("Context for LLM:", context);
     // 6. Prompt for Gemini
     const prompt = `
 You are a helpful AI assistant who answers the user’s real estate queries 
@@ -217,6 +255,9 @@ User Query: "${query}"
 Context:
 ${context}
 `;
+    logger.info("Vector search completed", {
+      resultCount: listings.length,
+    });
 
     // 7. Call Gemini
     const llmResponse = await gemini.generateContent(prompt);
@@ -226,20 +267,24 @@ ${context}
     if (cleanText.startsWith("```")) {
       cleanText = cleanText.replace(/```json\n?/, "").replace(/```$/, "");
     }
-
+    logger.info("LLM response received", {
+      responseLength: rawText.length,
+    });
     let parsed;
     try {
       parsed = JSON.parse(cleanText);
     } catch (e) {
-      console.error("Failed to parse LLM response:", cleanText);
       parsed = { text: "Error parsing response", listings: [] };
+      logger.error("Failed to parse LLM response", {
+        response: cleanText,
+      });
     }
 
     let enrichedListings = [];
     if (parsed.listings && parsed.listings.length > 0) {
       const ids = parsed.listings.map((l) => l.mongo_id);
       enrichedListings = await Listing.find({ _id: { $in: ids } }).select(
-        "-embedding" // exclude embedding field
+        "-embedding", // exclude embedding field
       );
     }
 
@@ -248,7 +293,12 @@ ${context}
       listings: enrichedListings,
     });
   } catch (err) {
-    console.error("Error in /search route:", err.message);
+    logger.error("Search query failed", {
+      error: err.message,
+      stack: err.stack,
+      query: req.query?.query,
+    });
+    // console.error("Error in /search route:", err.message);
     next(err);
   }
 };
@@ -256,7 +306,10 @@ ${context}
 export const updateListing = async (req, res, next) => {
   try {
     let listing = await Listing.findById(req.params.id);
-
+    logger.info("Update listing request", {
+      listingId: req.params.id,
+      userId: req.user?.id,
+    });
     if (!listing) {
       return next(errorHandler(404, "Listing Not Found"));
     }
@@ -264,15 +317,15 @@ export const updateListing = async (req, res, next) => {
       return next(errorHandler(401, "You can only Update Your own listing "));
     }
     const embedText = `
-      ${productData.name} 
-      ${productData.description || ""} 
-      ${productData.address || ""} 
-      ${productData.city || ""}
-      ${productData.type} TYPE, 
-      ${productData.bhk} BHK, 
-      ₹${productData.discountPrice}, 
-      Furnished: ${productData.furnished}, 
-      Parking: ${productData.parking}
+      ${listing.name} 
+      ${listing.description || ""} 
+      ${listing.address || ""} 
+      ${listing.city || ""}
+      ${listing.type} TYPE, 
+      ${listing.bhk} BHK, 
+      ₹${listing.discountPrice}, 
+      Furnished: ${listing.furnished}, 
+      Parking: ${listing.parking}
     `;
 
     // Generate embedding
@@ -297,9 +350,9 @@ export const updateListing = async (req, res, next) => {
       // console.log(data_sale);
       const response = await axios.post(
         pricePredictorModelUrl_rent_sale + "/predict-sale",
-        data_sale
+        data_sale,
       );
-      console.log(response.data.predicted_price);
+      // console.log(response.data.predicted_price);
       listing = {
         predictionPrice: response.data.predicted_price,
         ...req.body,
@@ -309,7 +362,7 @@ export const updateListing = async (req, res, next) => {
       // console.log(data_rent);
       const response = await axios.post(
         pricePredictorModelUrl_rent_sale + "/predict-rent",
-        data_rent
+        data_rent,
       );
       console.log(response.data.predicted_price);
       listing = {
@@ -321,13 +374,24 @@ export const updateListing = async (req, res, next) => {
 
     const updatedListing = await Listing.findByIdAndUpdate(
       req.params.id,
-      req.body,
-      { new: true }
+      {
+        ...req.body,
+        predictionPrice: listing.predictionPrice,
+      },
+      { new: true },
     );
-
+    logger.info("Listing updated successfully", {
+      listingId: updatedListing._id,
+      userId: req.user.id,
+    });
     return res.status(200).json(updatedListing);
   } catch (err) {
-    console.log(err);
+    // console.log(err);
+    logger.error("Failed to update listing", {
+      error: err.message,
+      stack: err.stack,
+      listingId: req.params?.id,
+    });
     next(err);
   }
 };
@@ -335,16 +399,23 @@ export const updateListing = async (req, res, next) => {
 export const getListing = async (req, res, next) => {
   try {
     const listing = await Listing.findById(req.params.id);
-
+    logger.info("Fetched listing by ID", { listingId: req.params.id });
     if (!listing) {
       return res
         .status(404)
         .json({ error: "No listing found for the given ID" });
     }
-
+    logger.info("Fetched listing by ID", {
+      listingId: req.params.id,
+    });
     return res.status(200).json(listing);
   } catch (err) {
-    console.error(err);
+    // console.error(err);
+    logger.error("Failed to fetch listings", {
+      error: err.message,
+      stack: err.stack,
+      listingId: req.params?.id,
+    });
     next(err);
   }
 };
@@ -354,6 +425,7 @@ export const getListings = async (req, res, next) => {
     const limit = parseInt(req.query.limit) || 9;
     const startIndex = parseInt(req.query.startIndex) || 0;
     let offer = req.query.offer;
+
     if (offer === undefined || offer === "false") {
       offer = { $in: [false, true] };
     } else offer = true;
@@ -390,7 +462,11 @@ export const getListings = async (req, res, next) => {
 
     return res.status(200).json(listings);
   } catch (err) {
-    console.error(err);
+    logger.error("Failed to fetch listings", {
+      error: err.message,
+      stack: err.stack,
+      query: req.query,
+    });
     next(err);
   }
 };

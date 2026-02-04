@@ -1,121 +1,180 @@
-import User from '../models/userModel.js';
-import bcrypt from 'bcrypt';
-import dotenv from 'dotenv';
-import { errorHandler } from '../utils/error.js';
-import * as jwt from 'jsonwebtoken';
+import User from "../models/userModel.js";
+import bcrypt from "bcrypt";
+import dotenv from "dotenv";
+import { errorHandler } from "../utils/error.js";
+import logger from "../monitoring/logger.js";
+import { createRequire } from "module";
+
+dotenv.config();
+
+const require = createRequire(import.meta.url);
+const jwt = require("jsonwebtoken");
+
+/* ========================= SIGNUP ========================= */
 
 export const signup = async (req, res, next) => {
-    // console.log("in");
-    try {
-        const { username, email, password } = req.body;
+  try {
+    const { username, email, password } = req.body;
 
-        const hashedPassword = await bcrypt.hash(password, 10);
+    logger.info("Signup attempt", {
+      route: "/signup",
+      method: req.method,
+      email,
+    });
 
-        const user = await User.create({ username, email, password: hashedPassword });
+    const hashedPassword = await bcrypt.hash(password, 10);
 
-        const payload = {
-            email: email,
-            id: user._id
-        };
+    const user = await User.create({
+      username,
+      email,
+      password: hashedPassword,
+    });
 
-        const token = jwt.sign(payload, process.env.JWT_SECRET, {
-            expiresIn: "2d",
-        });
-        console.log(token);
-        const userWithToken = { ...user.toObject(), token };
+    const token = jwt.sign(
+      { id: user._id, email },
+      process.env.JWT_SECRET,
+      { expiresIn: "2d" }
+    );
 
-        const { password: pass, ...rest } = userWithToken;
+    const { password: pass, ...rest } = user.toObject();
 
-        const options = {
-            expires: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000),
-            httpOnly: true,
-        };
+    res
+      .cookie("access_token", token, {
+        httpOnly: true,
+        expires: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000),
+      })
+      .status(201)
+      .json({ ...rest, token });
 
-        res.cookie("access_token", token, options).status(200).json({...rest, token});
-        // res.status(201).json("User Created Successfully ");
-    } catch (err) {
-        console.log(`error in signup ${err.message}`);
-        next(err);
-    }
+    logger.info("User signed up successfully", {
+      userId: user._id,
+      email,
+    });
+  } catch (err) {
+    logger.error("Signup failed", {
+      error: err.message,
+      route: "/signup",
+    });
+    next(err);
+  }
 };
+
+/* ========================= SIGNIN ========================= */
 
 export const signin = async (req, res, next) => {
-    try {
-        const { email, password } = req.body;
+  try {
+    const { email, password } = req.body;
 
-        const validUser = await User.findOne({ email });
+    logger.info("Signin attempt", {
+      route: "/signin",
+      email,
+    });
 
-        if (!validUser) {
-            return next(errorHandler(404, "User Not Found!"));
-        }
-
-        const hashedPassword = validUser.password;
-        const validPassword = await bcrypt.compare(password, hashedPassword);
-        if (!validPassword) {
-            return next(errorHandler(401, "Wrong Credentials"));
-        }
-
-        const payload = {
-            email: validUser.email,
-            id: validUser._id
-
-        };
-
-        const token = jwt.sign(payload, process.env.JWT_SECRET, {
-            expiresIn: "2d",
-        });
-        console.log(token);
-        const userWithToken = { ...validUser.toObject(), token };
-
-        const { password: pass, ...rest } = userWithToken;
-
-        const options = {
-            expires: new Date(Date.now() + 10 * 24 * 60 * 60 * 1000),
-            httpOnly: true,
-        };
-
-        res.cookie("access_token", token, options).status(200).json({...rest, token});
-        
-    } catch (err) {
-        console.error(`Error in signin: ${err.message}`);
-        next(err);
+    const user = await User.findOne({ email });
+    if (!user) {
+      return next(errorHandler(404, "User Not Found"));
     }
+
+    const isValid = await bcrypt.compare(password, user.password);
+    if (!isValid) {
+      return next(errorHandler(401, "Wrong Credentials"));
+    }
+
+    const token = jwt.sign(
+      { id: user._id, email },
+      process.env.JWT_SECRET,
+      { expiresIn: "2d" }
+    );
+
+    const { password: pass, ...rest } = user.toObject();
+
+    res
+      .cookie("access_token", token, {
+        httpOnly: true,
+        expires: new Date(Date.now() + 10 * 24 * 60 * 60 * 1000),
+      })
+      .status(200)
+      .json({ ...rest, token });
+
+    logger.info("User signed in successfully", {
+      userId: user._id,
+    });
+  } catch (err) {
+    logger.error("Signin failed", {
+      error: err.message,
+      route: "/signin",
+    });
+    next(err);
+  }
 };
 
+/* ========================= GOOGLE AUTH ========================= */
+
 export const google = async (req, res, next) => {
-    try {
-        console.log("inside o Auth")
-        const user = await User.findOne({ email: req.body.email });
-        if (user) {
-            const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET);
-            console.log(token)
-            const { password: pass, ...rest } = user._doc;
-            res.
-                cookie('access_token', token, { httpOnly: true })
-                .status(200).json({...rest, token});
-        } else {
-            const generatePassword = Math.random().toString(36).slice(-8);
-            const hashedPassword = await bcrypt.hash(generatePassword, 10);
-            const user = await User.create({ username: req.body.name.split(" ").join("").toLowerCase() + Math.random().toString(36).slice(-4), email: req.body.email, password: hashedPassword, avatar: req.body.photo });
-            const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET);
-            const { password: pass, ...rest } = user._doc;
+  try {
+    const { email, name, photo } = req.body;
 
-            res.
-                cookie('access_token', token, { httpOnly: true })
-                .status(200).json({...rest, token});
-
-        }
-    } catch (err) {
-        next(err);
+    if (!email) {
+      return next(errorHandler(400, "Google account email missing"));
     }
-}
+
+    let user = await User.findOne({ email });
+
+    if (!user) {
+      const generatedPassword = Math.random().toString(36).slice(-8);
+      const hashedPassword = await bcrypt.hash(generatedPassword, 10);
+
+      user = await User.create({
+        username:
+          name.split(" ").join("").toLowerCase() +
+          Math.random().toString(36).slice(-4),
+        email,
+        password: hashedPassword,
+        avatar: photo,
+      });
+    }
+
+    const token = jwt.sign(
+      { id: user._id, email },
+      process.env.JWT_SECRET,
+      { expiresIn: "2d" }
+    );
+
+    const { password: pass, ...rest } = user.toObject();
+
+    res
+      .cookie("access_token", token, { httpOnly: true })
+      .status(200)
+      .json({ ...rest, token });
+
+    logger.info("Google OAuth success", {
+      userId: user._id,
+      email,
+    });
+  } catch (err) {
+    logger.error("Google OAuth failed", {
+      error: err.message,
+      route: "/google",
+    });
+    next(err);
+  }
+};
+
+/* ========================= SIGNOUT ========================= */
 
 export const signout = async (req, res, next) => {
-    try {
-        res.clearCookie('access_token');
-        res.status(200).json('user has been logged out !');
-    }
-    catch (err) {
-        next(err);
-    }
-}
+  try {
+    res.clearCookie("access_token");
+    logger.info("User signed out", {
+      route: "/signout",
+      method: req.method,
+    });
+    res.status(200).json("User logged out successfully");
+  } catch (err) {
+    logger.error("Signout failed", {
+      error: err.message,
+      route: "/signout",
+    });
+    next(err);
+  }
+};

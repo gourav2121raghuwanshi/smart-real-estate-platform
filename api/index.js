@@ -9,15 +9,9 @@ import reviewRatingRouter from './routes/reviewRatingRoute.js';
 import dbConnect from './utils/databaseConnect.js';
 import cors from 'cors';
 import dotenv from 'dotenv';
-import client from 'prom-client'
-import responseTime from 'response-time';
-// import { pipeline } from "@xenova/transformers";
-// import Listing from './models/listingModel.js';
-// import { GoogleGenerativeAI } from "@google/generative-ai";
-// const genAI = new GoogleGenerativeAI(process.env.GOOGLE_API_KEY);
-// const model = genAI.getGenerativeModel({ model: "text-embedding-004"});
+import { prometheusMiddleware, metricsEndpoint } from './monitoring/prometheus.js';
+import logger from './monitoring/logger.js';
 
-// import axios from 'axios';
 
 dotenv.config();
 
@@ -53,8 +47,13 @@ app.use('/api/rateus', reviewRatingRouter);
 
 
 app.get('/', (req, res) => {
+     logger.info("Root endpoint accessed", {
+    route: "/",
+    method: req.method,
+  });
   res.send('Welcome to Backend');
 });
+
 // const extractor = await pipeline(
 //   "feature-extraction",
 //   "Xenova/all-MiniLM-L6-v2"
@@ -78,40 +77,40 @@ app.use((err, req, res, next) => {
 });
 
 
-const collectDefaultMetrics = client.collectDefaultMetrics;
-collectDefaultMetrics({ register: client.register });
+// const collectDefaultMetrics = client.collectDefaultMetrics;
+// collectDefaultMetrics({ register: client.register });
+app.get("/metrics", metricsEndpoint);
+// app.get("/metrics", async (req, res) => {
+//     try {
+//         res.setHeader("Content-Type", client.register.contentType);
+//         const metrics = await client.register.metrics();
+//         res.send(metrics);
+//     } catch (error) {
+//         logger.error("Metrics collection failed: " + error.message);
+//         res.status(500).json({ status: "Error", error: "Metrics collection failed" });
+//     }
+// });
 
-app.get("/metrics", async (req, res) => {
-    try {
-        res.setHeader("Content-Type", client.register.contentType);
-        const metrics = await client.register.metrics();
-        res.send(metrics);
-    } catch (error) {
-        logger.error("Metrics collection failed: " + error.message);
-        res.status(500).json({ status: "Error", error: "Metrics collection failed" });
-    }
-});
 
-
-const reqResTime = new client.Histogram({
-    name: "http_express_req_res_time",
-    help: "Time taken by request and response",
-    labelNames: ["method", "route", "status_code"],
-    buckets: [10, 50, 100, 200, 400, 500, 800, 1000, 2000,3000], // milliseconds
-});
+// const reqResTime = new client.Histogram({
+//     name: "http_express_req_res_time",
+//     help: "Time taken by request and response",
+//     labelNames: ["method", "route", "status_code"],
+//     buckets: [10, 50, 100, 200, 400, 500, 800, 1000, 2000,3000], // milliseconds
+// });
 
 // Total request counter
-const totalReqCounter = new client.Counter({
-    name: "total_requests",
-    help: "Total number of requests received",
-});
-
-app.use(
-    responseTime((req, res, time) => {
-        totalReqCounter.inc();
-        reqResTime.labels(req.method, req.url, res.statusCode.toString()).observe(time);
-    })
-);
+// const totalReqCounter = new client.Counter({
+//     name: "total_requests",
+//     help: "Total number of requests received",
+// });
+app.use(prometheusMiddleware);
+// app.use(
+//     responseTime((req, res, time) => {
+//         totalReqCounter.inc();
+//         reqResTime.labels(req.method, req.url, res.statusCode.toString()).observe(time);
+//     })
+// );
 
 // const Listing=require("./models/listingModel.js")
 // const updateListings = async () => {

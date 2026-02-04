@@ -1,12 +1,40 @@
-version: "3"
+# version: "3"
+
+# services:
+#   prom-server:
+#     image: prom/prometheus
+#     ports:
+#       - 9090:9090
+#     volumes:
+#       - ./prometheus-config.yml:/etc/prometheus/prometheus.yml
+version: "3.8"
 
 services:
-  prom-server:
+  prometheus:
     image: prom/prometheus
+    container_name: prometheus
     ports:
-      - 9090:9090
+      - "9090:9090"
     volumes:
       - ./prometheus-config.yml:/etc/prometheus/prometheus.yml
+    command:
+      - "--config.file=/etc/prometheus/prometheus.yml"
 
-# for running graphana : docker run -d -p 3000:3000 --name=grafana grafana/grafana-oss
+  loki:
+    image: grafana/loki:latest
+    container_name: loki
+    ports:
+      - "3100:3100"
+    command: -config.file=/etc/loki/local-config.yaml
+
+  grafana:
+    image: grafana/grafana-oss:latest
+    container_name: grafana
+    ports:
+      - "3001:3000"
+    depends_on:
+      - prometheus
+      - loki
+
+# for running graphana : docker run -d -p 3001:3001 --name=grafana grafana/grafana-oss
 # for log collection : docker run -d --name=loki -p 3100:3100 grafana/loki
