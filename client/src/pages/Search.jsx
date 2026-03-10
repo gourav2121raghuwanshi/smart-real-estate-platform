@@ -139,44 +139,50 @@ const Search = () => {
   //   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
+  e.preventDefault();
 
-    setLoading(true);
-    setShowMore(false);
-    setLlmText(""); // clear previous LLM text
+  setLoading(true);
+  setShowMore(false);
+  setLlmText("");
 
-    try {
-      if (llmSearch) {
-        // LLM search
-        const res = await axios.get(`${buri}/listing/search`, {
-          params: { query: sideBardata.searchTerm },
-          withCredentials: true,
-        });
-        console.log("LLM search response:", res);
-        const data = res?.data;
-        setListings(data.listings || []);
-        setLlmText(data.text || ""); // set LLM text
-      } else {
-        // Regular search
-         setLlmText("");
-        const urlParams = new URLSearchParams();
-        urlParams.set("searchTerm", sideBardata.searchTerm);
-        urlParams.set("type", sideBardata.type);
-        urlParams.set("parking", sideBardata.parking);
-        urlParams.set("furnished", sideBardata.furnished);
-        urlParams.set("offer", sideBardata.offer);
-        urlParams.set("sort", sideBardata.sort);
-        urlParams.set("order", sideBardata.order);
-
-        const searchQuery = urlParams.toString();
-        navigate(`/search?${searchQuery}`);
+  try {
+    if (llmSearch) {
+      if (!sideBardata.searchTerm.trim()) {
+        setListings([]);
+        setLlmText("");
+        setLoading(false);
+        return;
       }
-    } catch (err) {
-      console.error(err);
-    }
 
-    setLoading(false);
-  };
+      const res = await axios.get(`${buri}/listing/search`, {
+        params: { query: sideBardata.searchTerm.trim() },
+        withCredentials: true,
+      });
+
+      const data = res.data;
+      setListings(data.listings || []);
+      setLlmText(data.text || "");
+    } else {
+      setLlmText("");
+
+      const urlParams = new URLSearchParams();
+      urlParams.set("searchTerm", sideBardata.searchTerm);
+      urlParams.set("type", sideBardata.type);
+      urlParams.set("parking", sideBardata.parking);
+      urlParams.set("furnished", sideBardata.furnished);
+      urlParams.set("offer", sideBardata.offer);
+      urlParams.set("sort", sideBardata.sort);
+      urlParams.set("order", sideBardata.order);
+
+      const searchQuery = urlParams.toString();
+      navigate(`/search?${searchQuery}`);
+    }
+  } catch (err) {
+    console.error(err);
+  }
+
+  setLoading(false);
+};
 
   return (
     <div className="flex flex-col md:flex-row">
