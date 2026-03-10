@@ -8,18 +8,38 @@ dotenv.config();
 const genAI = new GoogleGenerativeAI(process.env.GOOGLE_API_KEY);
 // const gemini = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 const gemini = genAI.getGenerativeModel({ model: "gemini-2.5-flash-lite" });
+
+
 const embeddingModel = genAI.getGenerativeModel({
-  model: "text-embedding-004",
+  model: "gemini-embedding-001",
 });
+
 // The Gemini text-embedding-004 model is a text embedding model provided by Google through the Gemini API.
 //  Its purpose is to generate numerical vector representations (embeddings) of text inputs,
 //  capturing their semantic meaning and contextual relationships.
 
 const pricePredictorModelUrl_rent_sale = process.env.ML_MODEL_URI;
 
+
+
 async function generateEmbedding(text) {
-  const result = await embeddingModel.embedContent(text);
-  return result.embedding.values; // returns array of floats
+  const response = await axios.post(
+    "https://generativelanguage.googleapis.com/v1beta/models/gemini-embedding-001:embedContent",
+    {
+      content: {
+        parts: [{ text }],
+      },
+      output_dimensionality: 768,
+    },
+    {
+      headers: {
+        "Content-Type": "application/json",
+        "x-goog-api-key": process.env.GOOGLE_API_KEY,
+      },
+    },
+  );
+
+  return response.data.embedding.values;
 }
 // function cosineSimilarity(vecA, vecB) {
 //   const dot = vecA.reduce((sum, a, i) => sum + a * vecB[i], 0);
@@ -303,90 +323,185 @@ ${context}
   }
 };
 
+// export const updateListing = async (req, res, next) => {
+//   try {
+//     let listing = await Listing.findById(req.params.id);
+//     logger.info("Update listing request", {
+//       listingId: req.params.id,
+//       userId: req.user?.id,
+//     });
+//     if (!listing) {
+//       return next(errorHandler(404, "Listing Not Found"));
+//     }
+//     if (req.user.id !== listing.userRef) {
+//       return next(errorHandler(401, "You can only Update Your own listing "));
+//     }
+//     const embedText = `
+//       ${listing.name} 
+//       ${listing.description || ""} 
+//       ${listing.address || ""} 
+//       ${listing.city || ""}
+//       ${listing.type} TYPE, 
+//       ${listing.bhk} BHK, 
+//       ₹${listing.discountPrice}, 
+//       Furnished: ${listing.furnished}, 
+//       Parking: ${listing.parking}
+//     `;
+
+//     // Generate embedding
+//     const embedding = await generateEmbedding(embedText);
+
+//     const data_sale = {
+//       Area: listing.area,
+//       City: listing.city,
+//       Price: listing.discountPrice,
+//       Title: listing.name + " " + listing.address,
+//       bhk: listing.bhk,
+//     };
+
+//     const data_rent = {
+//       bhk: listing.bhk,
+//       Address: listing.name + " " + listing.address,
+//       city: listing.city,
+//       BathRoom: listing.bathroom,
+//       Furnished: listing.furnished === true ? 1 : 2,
+//     };
+//     if (listing.type === "sale") {
+//       // console.log(data_sale);
+//       const response = await axios.post(
+//         pricePredictorModelUrl_rent_sale + "/predict-sale",
+//         data_sale,
+//       );
+//       // console.log(response.data.predicted_price);
+//       listing = {
+//         predictionPrice: response.data.predicted_price,
+//         ...req.body,
+//         embedding,
+//       };
+//     } else {
+//       // console.log(data_rent);
+//       const response = await axios.post(
+//         pricePredictorModelUrl_rent_sale + "/predict-rent",
+//         data_rent,
+//       );
+//       console.log(response.data.predicted_price);
+//       listing = {
+//         predictionPrice: response.data.predicted_price, // Adjust this key for rent
+//         ...req.body,
+//         embedding,
+//       };
+//     }
+
+//     const updatedListing = await Listing.findByIdAndUpdate(
+//       req.params.id,
+//       {
+//         ...req.body,
+//         predictionPrice: listing.predictionPrice,
+//       },
+//       { new: true },
+//     );
+//     logger.info("Listing updated successfully", {
+//       listingId: updatedListing._id,
+//       userId: req.user.id,
+//     });
+//     return res.status(200).json(updatedListing);
+//   } catch (err) {
+//     // console.log(err);
+//     logger.error("Failed to update listing", {
+//       error: err.message,
+//       stack: err.stack,
+//       listingId: req.params?.id,
+//     });
+//     next(err);
+//   }
+// };
 export const updateListing = async (req, res, next) => {
   try {
-    let listing = await Listing.findById(req.params.id);
+    const existingListing = await Listing.findById(req.params.id);
+
     logger.info("Update listing request", {
       listingId: req.params.id,
       userId: req.user?.id,
     });
-    if (!listing) {
+
+    if (!existingListing) {
       return next(errorHandler(404, "Listing Not Found"));
     }
-    if (req.user.id !== listing.userRef) {
+
+    if (req.user.id !== existingListing.userRef) {
       return next(errorHandler(401, "You can only Update Your own listing "));
     }
+
+    // Merge old data with new incoming data
+    const updatedData = {
+      ...existingListing.toObject(),
+      ...req.body,
+    };
+
+    // Build embedding text from UPDATED values
     const embedText = `
-      ${listing.name} 
-      ${listing.description || ""} 
-      ${listing.address || ""} 
-      ${listing.city || ""}
-      ${listing.type} TYPE, 
-      ${listing.bhk} BHK, 
-      ₹${listing.discountPrice}, 
-      Furnished: ${listing.furnished}, 
-      Parking: ${listing.parking}
+      ${updatedData.name}
+      ${updatedData.description || ""}
+      ${updatedData.address || ""}
+      ${updatedData.city || ""}
+      ${updatedData.type} TYPE,
+      ${updatedData.bhk} BHK,
+      ₹${updatedData.discountPrice},
+      Furnished: ${updatedData.furnished},
+      Parking: ${updatedData.parking}
     `;
 
-    // Generate embedding
     const embedding = await generateEmbedding(embedText);
 
     const data_sale = {
-      Area: listing.area,
-      City: listing.city,
-      Price: listing.discountPrice,
-      Title: listing.name + " " + listing.address,
-      bhk: listing.bhk,
+      Area: updatedData.area,
+      City: updatedData.city,
+      Price: updatedData.discountPrice,
+      Title: updatedData.name + " " + updatedData.address,
+      bhk: updatedData.bhk,
     };
 
     const data_rent = {
-      bhk: listing.bhk,
-      Address: listing.name + " " + listing.address,
-      city: listing.city,
-      BathRoom: listing.bathroom,
-      Furnished: listing.furnished === true ? 1 : 2,
+      Address: updatedData.name + " " + updatedData.address,
+      bhk: Number(updatedData.bhk),
+      BathRoom: Number(updatedData.bathroom),
+      Furnished: updatedData.furnished === true ? 1 : 2,
+      city: updatedData.city,
     };
-    if (listing.type === "sale") {
-      // console.log(data_sale);
+
+    let predictionPrice;
+
+    if (updatedData.type === "sale") {
       const response = await axios.post(
         pricePredictorModelUrl_rent_sale + "/predict-sale",
         data_sale,
       );
-      // console.log(response.data.predicted_price);
-      listing = {
-        predictionPrice: response.data.predicted_price,
-        ...req.body,
-        embedding,
-      };
+      predictionPrice = response.data.predicted_price;
     } else {
-      // console.log(data_rent);
       const response = await axios.post(
         pricePredictorModelUrl_rent_sale + "/predict-rent",
         data_rent,
       );
-      console.log(response.data.predicted_price);
-      listing = {
-        predictionPrice: response.data.predicted_price, // Adjust this key for rent
-        ...req.body,
-        embedding,
-      };
+      predictionPrice = response.data.predicted_price;
     }
 
     const updatedListing = await Listing.findByIdAndUpdate(
       req.params.id,
       {
         ...req.body,
-        predictionPrice: listing.predictionPrice,
+        predictionPrice,
+        embedding,
       },
       { new: true },
     );
+
     logger.info("Listing updated successfully", {
       listingId: updatedListing._id,
       userId: req.user.id,
     });
+
     return res.status(200).json(updatedListing);
   } catch (err) {
-    // console.log(err);
     logger.error("Failed to update listing", {
       error: err.message,
       stack: err.stack,
@@ -395,7 +510,6 @@ export const updateListing = async (req, res, next) => {
     next(err);
   }
 };
-
 export const getListing = async (req, res, next) => {
   try {
     const listing = await Listing.findById(req.params.id);
