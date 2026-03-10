@@ -447,38 +447,76 @@ export const getListings = async (req, res, next) => {
   try {
     const limit = parseInt(req.query.limit) || 9;
     const startIndex = parseInt(req.query.startIndex) || 0;
-    let offer = req.query.offer;
 
+    let offer = req.query.offer;
     if (offer === undefined || offer === "false") {
       offer = { $in: [false, true] };
-    } else offer = true;
+    } else {
+      offer = true;
+    }
 
     let furnished = req.query.furnished;
     if (furnished === undefined || furnished === "false") {
       furnished = { $in: [false, true] };
+    } else {
+      furnished = true;
     }
+
     let parking = req.query.parking;
     if (parking === undefined || parking === "false") {
       parking = { $in: [false, true] };
+    } else {
+      parking = true;
     }
+
     let type = req.query.type;
     if (type === undefined || type === "all") {
       type = { $in: ["sale", "rent"] };
     }
-    const searchTerm = req.query.searchTerm || "";
-    const sort = req.query.sort || "createdAt";
-    const order = req.query.order || "desc";
 
-    const listings = await Listing.find({
-      $or: [
-        { name: { $regex: searchTerm, $options: "i" } },
-        { city: { $regex: searchTerm, $options: "i" } },
-      ],
+    const searchTerm = (req.query.searchTerm || "").trim();
+    const sort = req.query.sort || "createdAt";
+    const order = req.query.order === "asc" ? 1 : -1;
+
+    const query = {
       offer,
       furnished,
       parking,
       type,
-    })
+    };
+
+    if (searchTerm) {
+      const tokens = searchTerm
+        .toLowerCase()
+        .split(/\s+/)
+        .filter(Boolean);
+
+      query.$and = tokens.map((token) => {
+        const bhkMatch = token.match(/^(\d+)\s*bhk$/i) || token.match(/^(\d+)bhk$/i);
+
+        if (bhkMatch) {
+          const bhk = parseInt(bhkMatch[1], 10);
+          return {
+            $or: [
+              { bedrooms: bhk }, // if you have bedrooms field
+              { name: { $regex: `${bhk}\\s*bhk`, $options: "i" } },
+              { description: { $regex: `${bhk}\\s*bhk`, $options: "i" } }, // if exists
+            ],
+          };
+        }
+
+        return {
+          $or: [
+            { name: { $regex: token, $options: "i" } },
+            { city: { $regex: token, $options: "i" } },
+            { address: { $regex: token, $options: "i" } },      // optional
+            { description: { $regex: token, $options: "i" } },  // optional
+          ],
+        };
+      });
+    }
+
+    const listings = await Listing.find(query)
       .sort({ [sort]: order })
       .limit(limit)
       .skip(startIndex);
