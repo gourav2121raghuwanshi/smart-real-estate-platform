@@ -158,6 +158,7 @@ const Search = () => {
         setLlmText(data.text || ""); // set LLM text
       } else {
         // Regular search
+         setLlmText("");
         const urlParams = new URLSearchParams();
         urlParams.set("searchTerm", sideBardata.searchTerm);
         urlParams.set("type", sideBardata.type);
@@ -187,7 +188,11 @@ const Search = () => {
               type="checkbox"
               id="llmSearch"
               checked={llmSearch}
-              onChange={(e) => useLlmSearch(e.target.checked)}
+              onChange={(e) => {
+                const checked = e.target.checked;
+                useLlmSearch(checked);
+                if (!checked) setLlmText("");
+              }}
               className="w-5"
             />
             <label htmlFor="llmSearch" className="font-semibold">
@@ -320,7 +325,7 @@ const Search = () => {
             listings &&
             listings.map((listing) => (
               <ListingItem key={listing._id} listing={listing} />
-            ))}  
+            ))}
           {showMore && (
             <button
               className="text-xl text-green-800 hover:underline p-7 text-center w-full "
